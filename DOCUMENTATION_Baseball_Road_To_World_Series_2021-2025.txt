@@ -1,0 +1,1129 @@
+================================================================================
+ DATA DOCUMENTATION
+ Data_Baseball_Road_To_World_Series_2021-2025.xlsx
+================================================================================
+
+ Companion dataset for the Tableau Public visualization
+ "All In The Wins | #VOTD" by John Johansson
+ https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries
+
+ Document version : 1.0
+ Generated        : 2026-09-12
+ Source file      : Data_Baseball_Road_To_World_Series_2021-2025.xlsx
+ File size        : 564,422 bytes (~551 KB)
+ Format           : Microsoft Excel Workbook (.xlsx), 6 worksheets
+ Encoding         : UTF-8 (accented player names are preserved,
+                    e.g. "Teoscar Hernandez" is stored as "Teoscar Hernandez"
+                    with the accented a)
+
+================================================================================
+ 1. OVERVIEW
+================================================================================
+
+This workbook contains the complete regular-season and postseason game logs,
+plus season-level player statistics, for every team that reached the Major
+League Baseball World Series in the five seasons 2021 through 2025 - ten
+team-seasons in total (one Champion and one Runner-Up per year).
+
+The data answers the question the visualization explores: what does the road to
+a World Series actually look like, game by game, for the two teams that get
+there?
+
+Scope
+-----
+  Seasons covered        : 2021, 2022, 2023, 2024, 2025 (5 seasons)
+  Team-seasons covered   : 10 (2 per season - Champion and Runner-Up)
+  Regular-season games   : 1,619 team-game rows
+  Postseason games       : 161 team-game rows
+  Player-season records  : 321 batting, 342 pitching, 426 fielding
+  Total data rows        : 2,909 across 6 worksheets
+
+The ten team-seasons
+--------------------
+  Year  Result      Team                      Tm ID  League  WC Bye
+  ----  ----------  ------------------------  -----  ------  ------
+  2021  Champion    Atlanta Braves            ATL    NL      TRUE
+  2021  Runner-Up   Houston Astros            HOU    AL      TRUE
+  2022  Champion    Houston Astros            HOU    AL      TRUE
+  2022  Runner-Up   Philadelphia Phillies     PHI    NL      FALSE
+  2023  Champion    Texas Rangers             TEX    AL      FALSE
+  2023  Runner-Up   Arizona Diamondbacks      ARI    NL      FALSE
+  2024  Champion    Los Angeles Dodgers       LAD    NL      TRUE
+  2024  Runner-Up   New York Yankees          NYY    AL      TRUE
+  2025  Champion    Los Angeles Dodgers       LAD    NL      FALSE
+  2025  Runner-Up   Toronto Blue Jays         TOR    AL      TRUE
+
+IMPORTANT - what this dataset is NOT
+------------------------------------
+This is a *team-centric* dataset, not a league-wide one. It contains rows only
+for the 10 World Series participants. Opponent teams appear only as opponent
+codes and lookup attributes; their own game logs and player statistics are not
+included. Do not use this file to compute league-wide averages or standings.
+
+================================================================================
+ 2. PROVENANCE AND RELATIONSHIP TO THE TABLEAU WORKBOOK
+================================================================================
+
+Source of the underlying statistics
+-----------------------------------
+All game logs and player statistics were sourced from Baseball-Reference.com
+(Sports Reference LLC) - specifically the team schedule/results pages and the
+standard team batting, pitching and fielding tables for each team-season. The
+team logos that accompany this data package were sourced from SportsLogos.net.
+
+Some column names still carry Baseball-Reference conventions (for example "cLI",
+"OPS+", "Rdrs/yr", "Player-additional"), and a few scrape artifacts survive
+(the "Z1" column, whose only value is the literal text "boxscore").
+
+Consolidation performed for this public data source
+---------------------------------------------------
+The published Tableau workbook connects to FOUR separate Excel files. For this
+public data source those four files were consolidated into ONE workbook, and
+the worksheet names were cleaned up. NOTHING ELSE WAS CHANGED - the columns,
+the values and the grain are identical to what the Tableau workbook consumes.
+
+Sheet-name mapping (Tableau object  ->  sheet in this workbook):
+
+  Tableau object name    Tableau source table       Sheet in this workbook
+  ---------------------  -------------------------  ----------------------
+  Team Groups            'Team Groups$'             WS Teams
+  Season Games           Games_Champions$           Season Games
+  PS Games               'PS Games$'                PS Games
+  Batting                Batting$                   Batting Stats
+  Pitching               Pitching$                  Pitching Stats
+  Team Name Opponite     'Team Name Opponite$'      Team Name Opponite
+  Team Name Opponite1    'Team Name Opponite$'      Team Name Opponite
+                         (second instance of the same table - see section 3)
+  (not used in workbook) -                          Fielding Stats
+
+Two differences worth knowing:
+
+  a) "Team Name Opponite" is a single worksheet that the Tableau model uses
+     TWICE, as two independent role-playing lookups - once against Season Games
+     and once against PS Games. There is only one such sheet in this file.
+
+  b) "Fielding Stats" is present in this workbook but is NOT used by the
+     published visualization. It is included here because it completes the
+     Baseball-Reference team statistics triplet (batting / pitching /
+     fielding). Note its reduced coverage - see section 6.8.
+
+Scope of this document
+----------------------
+This document describes ONLY the data contained in the Excel file. The Tableau
+workbook's calculated fields, parameters, sets, groups and formatting are
+deliberately excluded; none of them are needed to use this data, and none of
+them are stored in this file.
+
+================================================================================
+ 3. THE DATA MODEL - HOW THE SHEETS SHOULD BE JOINED
+================================================================================
+
+3.1 Shape of the model
+----------------------
+The model is a star / snowflake. "WS Teams" is the central hub dimension. Four
+fact tables hang off it on the single key column "Unique". The two game-level
+fact tables each hang a further opponent lookup off their "Opp" column.
+
+                                      +---------------------+
+                                  +-->|  Batting Stats      |
+                                  |   +---------------------+
+                                  |
+                                  |   +---------------------+
+                                  +-->|  Pitching Stats     |
+                                  |   +---------------------+
+   +--------------+               |
+   |              |               |   +--------------+      +----------------------------+
+   |  WS Teams    |---------------+-->|  PS Games    |----->| Team Name Opponite         |
+   |  (hub)       |   [Unique]    |   +--------------+      | (instance 1 = "Opponite1") |
+   |              |               |        [Opp]            +----------------------------+
+   +--------------+               |
+                                  |   +--------------+      +----------------------------+
+                                  +-->| Season Games |----->| Team Name Opponite         |
+                                  |   +--------------+      | (instance 2)               |
+                                  |        [Opp]            +----------------------------+
+                                  |
+                                  |   +---------------------+
+                                  +-->|  Fielding Stats     |  (not in the published
+                                      +---------------------+   workbook; join it the
+                                                                same way)
+
+3.2 The join specification
+--------------------------
+Six relationships are defined in the published workbook, plus one recommended
+seventh for the Fielding Stats sheet.
+
+  #  Left table      Left key      Right table          Right key          Cardinality
+  -  --------------  ------------  -------------------  -----------------  ------------
+  1  WS Teams        Unique     =  Batting Stats        Unique             one-to-many
+  2  WS Teams        Unique     =  Pitching Stats       Unique             one-to-many
+  3  WS Teams        Unique     =  PS Games             Unique             one-to-many
+  4  WS Teams        Unique     =  Season Games         Unique             one-to-many
+  5  PS Games        Opp        =  Team Name Opponite   TeamID Opponite    many-to-one
+  6  Season Games    Opp        =  Team Name Opponite   TeamID Opponite    many-to-one
+  7  WS Teams        Unique     =  Fielding Stats       Unique             one-to-many
+     (recommended; not present in the published workbook)
+
+Relationships 5 and 6 use the SAME lookup sheet but must be two SEPARATE
+instances of it. In Tableau the second instance is automatically named
+"Team Name Opponite1". In SQL you alias the table twice. Do not try to serve
+both game tables from a single joined instance - that would force Season Games
+and PS Games onto the same row, which is wrong.
+
+3.3 The join key: "Unique"
+--------------------------
+"Unique" is the primary key of the whole model. It is a text field built as:
+
+        Year + "_" + League Champion + "_" + Team Name Short
+
+For example:  2021_Champion_Braves
+              2024_Runner-Up_Yankees
+              2025_Champion_Dodgers
+
+It is deliberately composite because neither Year nor team alone identifies a
+row: the Astros appear in both 2021 and 2022, and the Dodgers in both 2024 and
+2025. Always join on "Unique" - never on Year + Team Name alone, and never on
+the three-letter team code alone.
+
+Key integrity (verified against the file)
+  - WS Teams.Unique has 10 values and is unique. Confirmed primary key.
+  - Every Unique value in Season Games, PS Games, Batting Stats, Pitching Stats
+    and Fielding Stats matches a row in WS Teams. There are ZERO orphan keys.
+  - Fielding Stats covers only 8 of the 10 team-seasons (see section 6.8).
+
+3.4 Tableau relationship settings
+---------------------------------
+If you are rebuilding the model in Tableau, these are the Performance Options
+used in the published workbook. They are optional - Tableau infers safe
+defaults - but they let the query optimizer skip unnecessary joins.
+
+  Relationships 2, 3, 4 (WS Teams -> Pitching / PS Games / Season Games):
+        Cardinality            : One to Many
+        Referential Integrity  : All Records Match  (both sides)
+
+  Relationship 1 (WS Teams -> Batting):
+        Left at Tableau defaults (Many to Many / Some Records Match).
+        Setting it to One-to-Many / All Records Match is safe and is
+        recommended for consistency - the data supports it.
+
+  Relationships 5, 6 (game tables -> Team Name Opponite):
+        Cardinality            : Many to One
+        Referential Integrity  : All Records Match on the lookup side
+
+     >> CAUTION: "All Records Match" on the Opp side is NOT actually true in
+        this data. 20 game rows carry an Opp code that is absent from the
+        lookup sheet (see section 6.1). With "All Records Match" set, Tableau
+        may drop or mis-handle those rows. If you care about those 20 rows,
+        either fix the codes first or set Referential Integrity to
+        "Some Records Match".
+
+3.5 Critical warning - relationships, not physical joins
+--------------------------------------------------------
+Use Tableau RELATIONSHIPS (the "noodle" on the logical layer), not physical
+inner/left joins, and in SQL do not flatten the whole model into one table.
+
+The five fact tables sit at different grains that share only the team-season
+key:
+
+        Season Games    : one row per team per regular-season game
+        PS Games        : one row per team per postseason game
+        Batting Stats   : one row per player per team-season
+        Pitching Stats  : one row per player per team-season
+        Fielding Stats  : one row per player per team-season
+
+Physically joining any two of them on "Unique" produces a Cartesian fan-out.
+For the 2024 Dodgers alone, joining Season Games (162 rows) to Batting Stats
+(23 rows) yields 3,726 rows, and every measure on both sides is then multiplied
+- team wins would be counted 23 times and each player's home runs 162 times.
+
+Tableau relationships avoid this by querying each table at its own level of
+detail and only combining the aggregated results. If you must work in SQL or
+pandas, aggregate each fact table to the "Unique" grain FIRST, then join the
+aggregates.
+
+3.6 SQL equivalent
+------------------
+Treating each sheet as a table of the same name:
+
+    -- Game-level query: regular-season games with opponent attributes
+    SELECT  t.[Unique], t.[Year], t.[League Champion], t.[Team Name],
+            g.[Gm#], g.[Game Date], g.[W/L], g.[R], g.[RA], g.[Opp],
+            o.[Team Name Opponite], o.[League Opponite]
+    FROM         [WS Teams]           AS t
+    INNER JOIN   [Season Games]       AS g  ON g.[Unique] = t.[Unique]
+    LEFT  JOIN   [Team Name Opponite] AS o  ON o.[TeamID Opponite] = g.[Opp];
+
+    -- Game-level query: postseason games (note the SEPARATE lookup alias)
+    SELECT  t.[Unique], p.[Series], p.[Post Gm#], p.[W/L], p.[R], p.[RA],
+            o2.[Team Name Opponite]
+    FROM         [WS Teams]           AS t
+    INNER JOIN   [PS Games]           AS p   ON p.[Unique]           = t.[Unique]
+    LEFT  JOIN   [Team Name Opponite] AS o2  ON o2.[TeamID Opponite] = p.[Opp];
+
+    -- Combining grains safely: aggregate first, then join
+    SELECT  t.[Unique], t.[Team Name], rs.games, rs.wins, b.team_hr
+    FROM    [WS Teams] AS t
+    LEFT JOIN (SELECT [Unique], COUNT(*) AS games,
+                      SUM(CASE WHEN [W/L] LIKE 'W%' THEN 1 ELSE 0 END) AS wins
+               FROM [Season Games] GROUP BY [Unique])            AS rs
+           ON rs.[Unique] = t.[Unique]
+    LEFT JOIN (SELECT [Unique], SUM([HR]) AS team_hr
+               FROM [Batting Stats] WHERE [Player] <> 'Team Totals'
+               GROUP BY [Unique])                                AS b
+           ON b.[Unique] = t.[Unique];
+
+    -- LEFT JOIN is used for the opponent lookup on purpose: 20 rows will not
+    -- match (see section 6.1). An INNER JOIN would silently drop them.
+
+3.7 pandas equivalent
+---------------------
+    import pandas as pd
+
+    xl   = pd.ExcelFile("Data_Baseball_Road_To_World_Series_2021-2025.xlsx")
+    hub  = xl.parse("WS Teams")
+    sg   = xl.parse("Season Games")
+    ps   = xl.parse("PS Games")
+    opp  = xl.parse("Team Name Opponite")
+    bat  = xl.parse("Batting Stats")
+    pit  = xl.parse("Pitching Stats")
+    fld  = xl.parse("Fielding Stats")
+
+    # Regular-season games enriched with hub + opponent attributes
+    season = (sg.merge(hub, on="Unique", how="left", suffixes=("", "_team"))
+                .merge(opp, left_on="Opp", right_on="TeamID Opponite",
+                       how="left"))
+
+    # Postseason games - same pattern, independent lookup merge
+    post   = (ps.merge(hub, on="Unique", how="left", suffixes=("", "_team"))
+                .merge(opp, left_on="Opp", right_on="TeamID Opponite",
+                       how="left"))
+
+    # Player tables: keep them separate, or aggregate before joining
+    bat_players = bat[bat["Player"] != "Team Totals"]     # drop total rows!
+    team_hr     = bat_players.groupby("Unique", as_index=False)["HR"].sum()
+    summary     = hub.merge(team_hr, on="Unique", how="left")
+
+    # NOTE: pandas renames the duplicated "Pos" column in Batting Stats to
+    # "Pos.1". See section 5.5.
+
+================================================================================
+ 4. WORKSHEET INVENTORY
+================================================================================
+
+  Sheet name           Rows*   Cols   Grain                          Role
+  -------------------  ------  -----  -----------------------------  ----------
+  Season Games         1,619     37   team x regular-season game     Fact
+  WS Teams                10     10   team-season                    Hub / dim
+  Team Name Opponite      30      5   MLB team                       Lookup
+  PS Games               161     25   team x postseason game         Fact
+  Batting Stats          321     36   player x team-season           Fact
+  Pitching Stats         342     39   player x team-season           Fact
+  Fielding Stats         426     32   player x team-season           Fact
+
+  * Data rows, excluding the header row.
+
+  Sheets are listed in workbook order. Every sheet has its header in row 1 and
+  data starting in row 2, with no blank leading rows, no merged cells and no
+  footnote rows.
+
+================================================================================
+ 5. DATA DICTIONARY
+================================================================================
+
+ Legend for the Nulls column: the count of empty cells among the data rows.
+
+--------------------------------------------------------------------------------
+ 5.1  SHEET: "WS Teams"           (hub dimension - 10 rows, 10 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per World Series participant per season.
+ Primary key: Unique.
+
+  #  Column             Type     Nulls  Description
+  -  -----------------  -------  -----  ----------------------------------------
+  1  Team No            Integer      0  Sequential row identifier, 1-10. Ordered
+                                        by Year then League Champion.
+                                        Presentation ordering only; carries no
+                                        meaning.
+  2  Unique             Text         0  PRIMARY KEY. Year_LeagueChampion_
+                                        TeamNameShort, e.g.
+                                        "2021_Champion_Braves".
+                                        10 distinct values.
+  3  Tm ID              Text         0  Three-letter Baseball-Reference team
+                                        code (ATL, HOU, PHI, TEX, ARI, LAD,
+                                        NYY, TOR). 8 distinct codes across 10
+                                        rows because HOU and LAD each appear
+                                        twice.
+  4  Year               Integer      0  Season year, 2021-2025.
+  5  League Champion    Text         0  World Series result. "Champion" (won the
+                                        World Series) or "Runner-Up" (lost it).
+                                        Despite the name this is NOT the league
+                                        pennant - both teams won their league.
+  6  League             Text         0  "AL" or "NL".
+  7  Team Name          Text         0  Full club name, e.g.
+                                        "Los Angeles Dodgers".
+  8  Team Location      Text         0  City/region portion, e.g. "Los Angeles".
+  9  Team Name Short    Text         0  Nickname portion, e.g. "Dodgers".
+ 10  Wild Card Bye      Boolean      0  TRUE if the team received a first-round
+                                        bye and entered in the Division Series;
+                                        FALSE if it had to play the Wild Card
+                                        Series. TRUE for 6 of 10 team-seasons.
+
+--------------------------------------------------------------------------------
+ 5.2  SHEET: "Team Name Opponite"      (lookup - 30 rows, 5 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per MLB club. Primary key: TeamID Opponite.
+ Used TWICE in the model as a role-playing dimension (see section 3.2).
+
+ "Opponite" is the author's spelling of "opponent" and is preserved throughout
+ this file and in the Tableau workbook. Field names are suffixed "Opponite" so
+ that, once joined, they do not collide with the identically-shaped team fields
+ coming from the hub.
+
+  #  Column                    Type   Nulls  Description
+  -  ------------------------  -----  -----  ---------------------------------
+  1  TeamID Opponite           Text       0  PRIMARY KEY. Three-letter code.
+                                             30 values: ARI ATL BAL BOS CHC CHW
+                                             CIN CLE COL DET HOU KCR LAA LAD MIA
+                                             MIL MIN NYM NYY OAK PHI PIT SDP SEA
+                                             SFG STL TBR TEX TOR WSN
+  2  Team Name Opponite        Text       0  Full club name of the opponent.
+  3  Team Location Opponite    Text       0  City/region. 27 distinct values -
+                                             Chicago, Los Angeles and New York
+                                             each cover two clubs.
+  4  Team Name Opponite Short  Text       0  Nickname.
+  5  League Opponite           Text       0  "AL" or "NL".
+
+ Coverage note: all 30 MLB franchises are present, but the Athletics are listed
+ under the legacy code OAK. Season Games uses the current code ATH for 2025.
+ See section 6.1.
+
+--------------------------------------------------------------------------------
+ 5.3  SHEET: "Season Games"         (fact - 1,619 rows, 37 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per team per regular-season game.
+ Composite key: Unique + Gm#  (verified unique across all 1,619 rows).
+ Foreign keys: Unique -> WS Teams ; Opp -> Team Name Opponite.
+
+ Row counts are 162 per team-season except the 2021 Braves, who have 161 - that
+ club played only 161 games that season. Home/away is an even 81/81 for every
+ team except the 2021 Braves at 80/81.
+
+ Columns 1-22 are Baseball-Reference schedule columns carried over as-is.
+ Columns 23-31 are helper columns added by the author for the visualization.
+ Columns 32-37 are denormalized copies of hub attributes.
+
+  #  Column           Type      Nulls  Description
+  -  ---------------  --------  -----  ---------------------------------------
+  1  Gm#              Integer       0  Team's game number in the season, 1-162.
+  2  Date (OG)        Text          0  Original Baseball-Reference date label,
+                                       e.g. "Wednesday, Mar 20". No year, so it
+                                       is display text only. For doubleheaders
+                                       B-R appends a suffix. Use Game Date for
+                                       any real date logic.
+  3  Z1               Text          0  Scrape artifact. The literal text
+                                       "boxscore" on every row (it was the link
+                                       label on the source page). Safe to drop.
+  4  Tm               Text          0  The subject team's three-letter code.
+                                       Always matches WS Teams.Tm ID.
+  5  Z2               Text        809  Home/away indicator. "@" = the subject
+                                       team was the AWAY team; EMPTY = it was
+                                       the HOME team. 810 away, 809 home rows.
+                                       Treat blank as "home", not as missing.
+  6  Opp              Text          0  Opponent three-letter code. 31 distinct
+                                       values. FOREIGN KEY to Team Name
+                                       Opponite.TeamID Opponite - 10 rows do
+                                       not match (see 6.1).
+  7  W/L              Text          0  Game result for the subject team. Four
+                                       values: "W" (859), "L" (621),
+                                       "W-wo" (70, won as a walk-off),
+                                       "L-wo" (69, lost on a walk-off).
+                                       To test for a win use "starts with W",
+                                       NOT equality with "W".
+  8  R                Integer       0  Runs scored by the subject team. 0-21.
+  9  RA               Integer       0  Runs allowed. 0-20.
+ 10  Inn              Integer   1,465  Innings played, populated ONLY when the
+                                       game did not go the standard 9 innings.
+                                       Range 5-13 (154 rows). Blank means 9.
+ 11  W - L            Text          0  Cumulative season record after this game
+                                       as display text, e.g. "51 - 32".
+ 12  Rank             Integer       0  Team's position in its division after
+                                       this game, 1-5.
+ 13  GB               Mixed         0  Games back. MIXED TYPE: text such as
+                                       "up 0.5" or "Tied" when leading or level
+                                       (990 rows), and a NUMBER when trailing
+                                       (629 rows). Must be parsed, not summed.
+ 14  Win              Text          0  Surname of the winning pitcher.
+ 15  Loss             Text          0  Surname of the losing pitcher.
+ 16  Save             Text        834  Surname of the pitcher credited with a
+                                       save. Blank when no save was recorded.
+ 17  Time             Time          0  DURATION of the game, stored as an Excel
+                                       time value, e.g. 03:05 = 3 h 5 min.
+                                       It is an elapsed time, NOT a start time.
+ 18  D/N              Text          0  "D" day game (539) or "N" night (1,080).
+ 19  Attendance       Integer      11  Paid attendance, 1,554-54,154. 11 blanks
+                                       (games where B-R reports no figure).
+ 20  cLI              Decimal       2  Championship Leverage Index from
+                                       Baseball-Reference: how much this game
+                                       mattered to the team's title odds.
+                                       1.0 = average; range 0-6.43.
+ 21  Streak           Text          0  Current win/loss streak as repeated
+                                       signs: "+" = 1-game win streak,
+                                       "+++" = 3, "--" = 2-game losing streak.
+                                       The length of the string is the streak
+                                       length; the sign is the direction.
+                                       Range 1 to 11 characters.
+ 22  Orig. Scheduled  Text      1,606  Populated only for makeup games. Gives
+                                       the original date and the reason, e.g.
+                                       "2021-04-24 (Rain)". 13 rows: 8 rain,
+                                       2 inclement weather, 1 Covid, 1 air
+                                       quality, 1 Hurricane Hilary.
+ 23  W                Integer       0  Cumulative wins after this game (numeric
+                                       half of "W - L"). 0-106.
+ 24  L                Integer       0  Cumulative losses after this game. 0-78.
+ 25  Day Name         Text          0  Day of week, "Monday".."Sunday".
+ 26  Date Calc        Mixed         0  Helper column used to plot all five
+                                       seasons on a common calendar axis.
+                                       *** MIXED TYPE - see section 6.2 ***
+                                       For 2021-2024 rows: a real date with the
+                                       month/day of the game but the YEAR
+                                       FORCED TO 2025. For 2025 rows: TEXT such
+                                       as "Apr-1" with no year at all.
+                                       Do not use as a date. Use Game Date.
+ 27  2 Games          Text          0  "Yes" if the game was part of a
+                                       doubleheader (38 rows), otherwise "No".
+ 28  2 Games Order    Integer       0  1 or 2 - which game of the doubleheader.
+                                       Always 1 on non-doubleheader rows.
+ 29  Year             Integer       0  Season year, 2021-2025.
+ 30  Game Date        Text          0  The actual calendar date of the game.
+                                       STORED AS TEXT in M/D/YYYY format, e.g.
+                                       "3/20/2024" - not an Excel date. Parse
+                                       it before doing date arithmetic.
+                                       (In PS Games the same-named column IS a
+                                       real date - see section 6.2.)
+ 31  Week Number      Integer       0  Week of the season, 1-29.
+ 32  Unique           Text          0  FOREIGN KEY to WS Teams.Unique.
+ 33  League Champion  Text          0  Denormalized copy of the hub column.
+                                       *** CONTAINS A KNOWN ERROR - see 6.3 ***
+ 34  League           Text          0  Denormalized copy: "AL" / "NL".
+ 35  Team Name        Text          0  Denormalized copy: full club name.
+ 36  Team Location    Text          0  Denormalized copy: city/region.
+ 37  Team Name Short  Text          0  Denormalized copy: nickname.
+
+--------------------------------------------------------------------------------
+ 5.4  SHEET: "PS Games"             (fact - 161 rows, 25 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per team per postseason game.
+ Composite key: Unique + Post Gm#  (verified unique across all 161 rows).
+ Foreign keys: Unique -> WS Teams ; Opp -> Team Name Opponite (second instance).
+
+ Postseason games per team-season range from 13 (2022 Astros) to 18 (2025 Blue
+ Jays). Series breakdown: 8 Wild Card, 38 Division Series, 57 League
+ Championship Series, 58 World Series rows.
+
+ Because both World Series participants are in the dataset, each World Series
+ game appears TWICE - once from each team's perspective, with R and RA
+ mirrored. Remember this when counting: 58 World Series rows are 29 games.
+
+  #  Column            Type      Nulls  Description
+  -  ----------------  --------  -----  --------------------------------------
+  1  Series            Text          0  Round name. Four values:
+                                        "WILD CARD SERIES", "DIVISION SERIES",
+                                        "LEAGUE CHAMPIONSHIP SERIES",
+                                        "WORLD SERIES".
+  2  Year              Integer       0  Season year, 2021-2025.
+  3  Tm                Text          0  Subject team's code. NOTE: the 2021
+                                        Braves are coded "BRA" here but "ATL"
+                                        everywhere else (see 6.1).
+  4  Post Gm#          Integer       0  Running game number across the team's
+                                        ENTIRE postseason, 1-29 (continues
+                                        across series boundaries).
+  5  Post Series Gm#   Integer       0  Game number WITHIN the current series,
+                                        1-7. Resets each round.
+  6  Series #          Integer       0  Numeric round code used for sorting.
+                                        Counts DOWN toward the title:
+                                        4 = Wild Card Series
+                                        3 = Division Series
+                                        2 = League Championship Series
+                                        1 = World Series
+                                        Sort ascending to order rounds from the
+                                        final backwards, descending for
+                                        chronological order.
+  7  Series Standings  Mixed         0  FINAL result of that series for the
+                                        subject team, repeated on every row of
+                                        the series, e.g. "4 - 2".
+                                        Two defects - see section 6.4.
+  8  Opp               Text          0  Opponent code. 21 distinct values.
+                                        FOREIGN KEY to Team Name Opponite -
+                                        10 rows do not match (see 6.1).
+  9  W/L               Text          0  "W" or "L". No walk-off variants here.
+                                        *** 16 rows disagree with R vs RA -
+                                        see section 6.5 ***
+ 10  R                 Integer       0  Runs scored, 0-13.
+ 11  RA                Integer       0  Runs allowed, 0-12.
+ 12  W - L_S           Text          0  Running record WITHIN the current
+                                        series as text, e.g. "2 - 1". Resets
+                                        each round.
+ 13  W_S               Integer       0  Running wins within the current series,
+                                        0-5.
+ 14  L_S               Integer       0  Running losses within the current
+                                        series, 0-5.
+ 15  W - L             Text         35  Running record across the WHOLE
+                                        postseason as text, e.g. "8 - 4".
+                                        Not populated for 2025.
+ 16  W                 Integer      35  Running postseason wins, 0-20.
+                                        Not populated for 2025.
+ 17  L                 Integer      35  Running postseason losses, 0-9.
+                                        Not populated for 2025.
+ 18  Day Name          Text          0  Day of week.
+ 19  Game Date         Date          0  Actual game date as a REAL Excel date,
+                                        2021-10-07 to 2025-11-01. (Unlike the
+                                        text Game Date in Season Games.)
+ 20  Unique            Text          0  FOREIGN KEY to WS Teams.Unique.
+ 21  League Champion   Text          0  Denormalized copy. Verified correct on
+                                        all 161 rows.
+ 22  League            Text          0  Denormalized copy.
+ 23  Team Name         Text          0  Denormalized copy.
+ 24  Team Location     Text          0  Denormalized copy.
+ 25  Team Name Short   Text          0  Denormalized copy.
+
+ The 35 blanks in columns 15-17 are exactly the 2025 rows (17 Dodgers + 18 Blue
+ Jays). The per-series columns (W - L_S, W_S, L_S) ARE populated for 2025, so
+ cumulative postseason totals for 2025 can be derived if needed.
+
+--------------------------------------------------------------------------------
+ 5.5  SHEET: "Batting Stats"        (fact - 321 rows, 36 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per player per team-season, plus one "Team Totals" row per
+ team-season. Composite key: Unique + Player (verified unique).
+ Foreign key: Unique -> WS Teams.
+
+ Standard Baseball-Reference team batting table. Roster sizes vary widely
+ (23 to 57 players) because they include every player who made a plate
+ appearance, including in-season acquisitions and departures.
+
+ >> TEAM TOTALS ROWS: 10 rows (one per team-season) have Player = "Team Totals"
+    and a blank Rk. These are pre-aggregated team sums, NOT players. They are
+    the reason the maxima on counting columns look impossible for an individual
+    (PA up to 6,306, H up to 1,496, HR up to 244). ALWAYS filter them out
+    before aggregating, or you will double-count every team total.
+
+ >> DUPLICATE COLUMN NAME: "Pos" appears TWICE, at positions 6 and 34. They hold
+    different things. Tableau names the second one "Pos 1"; pandas names it
+    "Pos.1". See the entries below.
+
+  #  Column             Type     Nulls  Description
+  -  -----------------  -------  -----  ---------------------------------------
+  1  Year               Integer      0  Season year, 2021-2025.
+  2  Unique             Text         0  FOREIGN KEY to WS Teams.Unique.
+  3  Rk                 Integer     10  Baseball-Reference row rank within the
+                                        team table, 1-56. BLANK identifies the
+                                        10 "Team Totals" rows.
+  4  Player             Text         0  Player name, UTF-8 with accents
+                                        preserved. 273 distinct names (players
+                                        recur across team-seasons). The value
+                                        "Team Totals" marks an aggregate row.
+  5  Age                Integer     10  Player age during that season, 20-38.
+                                        Blank on Team Totals rows.
+  6  Pos                Text        12  PRIMARY position, simple code: C, 1B,
+                                        2B, 3B, SS, LF, CF, RF, DH, etc.
+                                        15 distinct values.
+  7  WAR                Decimal      2  Wins Above Replacement, -1.6 to 39.6
+                                        (the high end is a Team Totals row).
+  8  G                  Integer      0  Games played, 1-162.
+  9  PA                 Integer      0  Plate appearances.
+ 10  AB                 Integer      0  At bats.
+ 11  R                  Integer      0  Runs scored.
+ 12  H                  Integer      0  Hits.
+ 13  2B                 Integer      0  Doubles.
+ 14  3B                 Integer      0  Triples.
+ 15  HR                 Integer      0  Home runs.
+ 16  RBI                Integer      0  Runs batted in.
+ 17  SB                 Integer      0  Stolen bases.
+ 18  CS                 Integer      0  Caught stealing.
+ 19  BB                 Integer      0  Bases on balls (walks).
+ 20  SO                 Integer      0  Strikeouts.
+ 21  BA                 Decimal     53  Batting average (H/AB). Blank when the
+                                        player had no at bats.
+ 22  OBP                Decimal     53  On-base percentage.
+ 23  SLG                Decimal     53  Slugging percentage.
+ 24  OPS                Decimal     53  On-base plus slugging (OBP + SLG).
+ 25  OPS+               Integer     53  OPS indexed to the league and park-
+                                        adjusted. 100 = league average.
+                                        Range -100 to 475.
+ 26  rOBA               Decimal     53  Reference weighted on-base average.
+ 27  Rbat+              Integer     53  Batting runs indexed, 100 = average.
+                                        Range -358 to 536.
+ 28  TB                 Integer      0  Total bases.
+ 29  GIDP               Integer      0  Grounded into double play.
+ 30  HBP                Integer      0  Hit by pitch.
+ 31  SH                 Integer      0  Sacrifice hits (bunts).
+ 32  SF                 Integer      0  Sacrifice flies.
+ 33  IBB                Integer      0  Intentional bases on balls.
+ 34  Pos  [2nd]         Mixed       10  DETAILED position string in Baseball-
+                                        Reference notation, e.g. "*2/HD",
+                                        "64H5/13", "*79". Digits are position
+                                        numbers, "*" marks the primary position,
+                                        "/" separates secondary positions,
+                                        H = pinch hitter, D = designated hitter.
+                                        *** Two rows were auto-converted by
+                                        Excel into dates - see section 6.6 ***
+ 35  Awards             Text       274  Season awards in B-R shorthand, e.g.
+                                        "AS" (All-Star), "MVP-17" (17th in MVP
+                                        voting), "SS" (Silver Slugger), "ROY-3".
+                                        Codes are concatenated without
+                                        separators: "ASMVP-17" = All-Star and
+                                        17th in MVP voting. Blank = none.
+ 36  Player-additional  Mixed       56  Baseball-Reference player ID, e.g.
+                                        "freemfr01" - a stable key usable to
+                                        link out to B-R or to other datasets.
+                                        NOT POPULATED for either 2025 team
+                                        (48 player rows). Holds the sentinel
+                                        value -9999 on the 8 Team Totals rows
+                                        for 2021-2024. See section 6.7.
+
+--------------------------------------------------------------------------------
+ 5.6  SHEET: "Pitching Stats"       (fact - 342 rows, 39 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per pitcher per team-season, plus one "Team Totals" row per
+ team-season. Composite key: Unique + Player (verified unique).
+ Foreign key: Unique -> WS Teams.
+
+ Standard Baseball-Reference team pitching table. Staff sizes range from 23 to
+ 41 pitchers. The same Team Totals caveat as Batting Stats applies - 10 rows
+ with blank Rk and Player = "Team Totals" must be filtered before aggregating.
+
+  #  Column             Type     Nulls  Description
+  -  -----------------  -------  -----  ---------------------------------------
+  1  Year               Integer      0  Season year, 2021-2025.
+  2  Unique             Text         0  FOREIGN KEY to WS Teams.Unique.
+  3  Rk                 Integer     10  B-R row rank, 1-40. Blank on Team
+                                        Totals rows.
+  4  Player             Text         0  Pitcher name. 288 distinct values.
+  5  Age                Integer     10  Age during the season, 21-40.
+  6  Pos                Text       233  Role: "SP" starting pitcher, "RP" relief
+                                        pitcher, "CL" closer. Populated on only
+                                        109 rows - this is a sparse annotation
+                                        by the author, not a B-R column. Derive
+                                        the role from GS/G/SV if you need it for
+                                        every pitcher.
+  7  WAR                Decimal      0  Wins Above Replacement, -1.9 to 23.7.
+  8  W                  Integer      0  Wins credited to the pitcher, 0-106
+                                        (high end = Team Totals).
+  9  L                  Integer      0  Losses charged, 0-78.
+ 10  W-L%               Decimal     99  Winning percentage. Blank when the
+                                        pitcher had no decisions.
+ 11  ERA                Decimal      0  Earned run average, 0-81.00. Extreme
+                                        values are real - they belong to
+                                        pitchers with a fraction of an inning.
+ 12  G                  Integer      0  Games pitched, 1-162.
+ 13  GS                 Integer      0  Games started, 0-162.
+ 14  GF                 Integer      0  Games finished, 0-162.
+ 15  CG                 Integer      0  Complete games, 0-3.
+ 16  SHO                Integer      0  Shutouts, 0-2.
+ 17  SV                 Integer      0  Saves, 0-53.
+ 18  IP                 Decimal      0  Innings pitched, 0.1-1452.2. NOTE the
+                                        baseball convention: the decimal is
+                                        THIRDS of an inning, not a fraction.
+                                        140.1 means 140 and 1/3 innings, and
+                                        x.2 means two-thirds. Do NOT sum or
+                                        average this column arithmetically
+                                        without converting to outs (IP*3).
+ 19  H                  Integer      0  Hits allowed.
+ 20  R                  Integer      0  Runs allowed.
+ 21  ER                 Integer      0  Earned runs allowed.
+ 22  HR                 Integer      0  Home runs allowed.
+ 23  BB                 Integer      0  Walks issued.
+ 24  IBB                Integer      0  Intentional walks issued.
+ 25  SO                 Integer      0  Strikeouts recorded.
+ 26  HBP                Integer      0  Batters hit by pitch.
+ 27  BK                 Integer      0  Balks.
+ 28  WP                 Integer      0  Wild pitches.
+ 29  BF                 Integer      0  Batters faced.
+ 30  ERA+               Integer     20  ERA indexed to the league and park-
+                                        adjusted. 100 = average, HIGHER IS
+                                        BETTER. Range 11-650.
+ 31  FIP                Decimal      0  Fielding Independent Pitching, on the
+                                        ERA scale. 0.26-45.17.
+ 32  WHIP               Decimal      0  Walks + hits per inning pitched, 0-12.
+ 33  H9                 Decimal      0  Hits allowed per 9 innings.
+ 34  HR9                Decimal      0  Home runs allowed per 9 innings.
+ 35  BB9                Decimal      0  Walks per 9 innings.
+ 36  SO9                Decimal      0  Strikeouts per 9 innings.
+ 37  SO/BB              Decimal     26  Strikeout-to-walk ratio. Blank when the
+                                        pitcher issued no walks.
+ 38  Awards             Text       326  B-R award shorthand, e.g. "CYA-4" (4th
+                                        in Cy Young voting), "ASCYA-1MVP-10".
+ 39  Player-additional  Mixed       80  B-R player ID. Not populated for either
+                                        2025 team; -9999 on the 2021-2024 Team
+                                        Totals rows. See section 6.7.
+
+--------------------------------------------------------------------------------
+ 5.7  SHEET: "Fielding Stats"       (fact - 426 rows, 32 columns)
+--------------------------------------------------------------------------------
+ Grain: one row per player per team-season, plus one "Team Totals" row per
+ team-season. Composite key: Unique + Player (verified unique - the rows are
+ already aggregated across every position a player played).
+ Foreign key: Unique -> WS Teams.
+
+ >> COVERAGE GAP: this sheet covers 2021-2024 ONLY (8 of the 10 team-seasons).
+    Neither 2025 team has any fielding rows. See section 6.8.
+ >> NOT USED by the published Tableau visualization.
+
+ Standard Baseball-Reference team fielding table.
+
+  #  Column             Type     Nulls  Description
+  -  -----------------  -------  -----  ---------------------------------------
+  1  Year               Integer      0  Season year - 2021-2024 ONLY.
+  2  Unique             Text         0  FOREIGN KEY to WS Teams.Unique.
+                                        8 distinct values (2025 absent).
+  3  Rk                 Integer      8  B-R row rank, 1-59. Blank on the 8
+                                        Team Totals rows.
+  4  Player             Text         0  Player name. 379 distinct values.
+  5  Age                Integer      8  Age during the season, 20-39.
+  6  G                  Integer      0  Games appeared in the field, 1-162.
+  7  GS                 Integer      0  Games started in the field, 0-162.
+  8  CG                 Integer      0  Complete games in the field, 0-1153
+                                        (high end = Team Totals).
+  9  Inn                Decimal      0  Innings played in the field, 0.1-1452.2.
+                                        Same thirds convention as pitching IP -
+                                        see 5.6 column 18.
+ 10  Ch                 Integer      0  Total chances (PO + A + E).
+ 11  PO                 Integer      0  Putouts.
+ 12  A                  Integer      0  Assists.
+ 13  E                  Integer      0  Errors, 0-93.
+ 14  DP                 Integer      0  Double plays turned.
+ 15  Fld%               Decimal     36  Fielding percentage, (PO+A)/Ch. 0-1.
+ 16  Rtot               Integer    239  Total Zone total fielding runs above
+                                        average. Sparse - Total Zone is a legacy
+                                        metric available for only some players.
+ 17  Rtot/yr            Integer    239  Rtot prorated to 1,200 innings.
+ 18  Rdrs               Integer      0  Defensive Runs Saved, -34 to 76.
+ 19  Rdrs/yr            Integer      0  DRS prorated to 1,200 innings.
+ 20  RF/9               Decimal      0  Range factor per 9 innings:
+                                        9*(PO+A)/Inn.
+ 21  lgRF9              Decimal      0  League average range factor per 9
+                                        innings, for comparison.
+ 22  RF/G               Decimal      0  Range factor per game: (PO+A)/G.
+ 23  lgRFG              Decimal      0  League average range factor per game.
+ 24  PB                 Integer    384  Passed balls. CATCHERS ONLY - blank for
+                                        everyone else (42 populated rows).
+ 25  WP                 Integer    384  Wild pitches allowed. Catchers only.
+ 26  SB                 Integer    384  Stolen bases allowed. Catchers only.
+ 27  CS                 Integer    384  Runners caught stealing. Catchers only.
+ 28  CS%                Decimal    387  Caught-stealing percentage, 0-100
+                                        (expressed as a percentage, not a rate).
+                                        Catchers only.
+ 29  Pick               Integer    384  Pickoffs. Catchers only.
+ 30  Pos                Mixed        8  Detailed position string in B-R
+                                        notation, same convention as Batting
+                                        Stats column 34. *** Two rows were
+                                        auto-converted by Excel into dates -
+                                        see section 6.6 ***
+ 31  Awards             Text       377  B-R award shorthand, e.g. "ASMVP-19SS".
+ 32  Player-additional  Mixed        0  B-R player ID. -9999 on the 8 Team
+                                        Totals rows. Unlike Batting and
+                                        Pitching this column is fully populated
+                                        for every player row, because the sheet
+                                        contains no 2025 data.
+
+================================================================================
+ 6. DATA QUALITY NOTES AND KNOWN ISSUES
+================================================================================
+
+ Everything in this section was verified programmatically against the file.
+ None of it prevents the dataset from being used, but anyone building on it
+ should know about it. Issues are ordered roughly by how likely they are to
+ bite you.
+
+--------------------------------------------------------------------------------
+ 6.1  Opponent codes that do not match the lookup sheet  (20 rows)
+--------------------------------------------------------------------------------
+ The Opp -> TeamID Opponite join fails for 20 of the 1,780 game rows. Use a
+ LEFT join so these rows survive with null opponent attributes; an INNER join
+ silently drops them.
+
+   Sheet          Opp code  Rows  Cause
+   -------------  --------  ----  ---------------------------------------------
+   Season Games   ATH         10  The Athletics' current Baseball-Reference
+                                  code. The lookup sheet still carries the
+                                  franchise under the legacy code OAK.
+                                  Affects 2025 rows only.
+   PS Games       CWS          4  Chicago White Sox coded "CWS" here, but the
+                                  lookup sheet uses "CHW". 2021 Astros ALDS.
+   PS Games       BRA          6  Atlanta Braves coded "BRA" here, but the
+                                  lookup sheet (and every other sheet) uses
+                                  "ATL". 2021 World Series, Astros' rows.
+
+ Related: the PS Games "Tm" column also codes the 2021 Braves as "BRA" on all
+ 16 of their postseason rows, while WS Teams.Tm ID and Season Games.Tm both use
+ "ATL". Any code-based join between PS Games.Tm and another sheet will miss
+ those 16 rows. This does not affect the documented model, which joins on
+ "Unique", not on team codes.
+
+ Fix: standardise on one code set. Either add an "ATH" row to the lookup (or
+ rename OAK to ATH) and change "CWS" to "CHW" and "BRA" to "ATL" in PS Games.
+
+--------------------------------------------------------------------------------
+ 6.2  Date columns are inconsistent between sheets and mixed within one
+--------------------------------------------------------------------------------
+ Three separate problems:
+
+ a) "Game Date" has a different data type in each game sheet.
+      Season Games : TEXT, format M/D/YYYY  (e.g. "3/20/2024") - all 1,619 rows
+      PS Games     : a real Excel DATE                         - all 161 rows
+    Any tool reading both sheets will type them differently. Parse the Season
+    Games column to a date before using it.
+
+ b) "Date Calc" (Season Games) is mixed-type and intentionally denormalised.
+    It exists to overlay all five seasons on one calendar axis, so the year is
+    deliberately discarded:
+      2021-2024 rows (1,295) : a real date carrying the game's month and day but
+                               with the year FORCED TO 2025.
+      2025 rows        (324) : TEXT strings such as "Apr-1", "Mar-18", "Sep-9"
+                               with no year component at all (173 distinct).
+    Do not treat this column as a date, and never use it to derive the season -
+    use "Year" or "Game Date". It is a plotting helper only and can be dropped
+    from any analytical copy of the data.
+
+ c) "Time" (Season Games) is a DURATION stored as an Excel time value, not a
+    first-pitch time. 03:05 means the game lasted 3 hours 5 minutes.
+
+--------------------------------------------------------------------------------
+ 6.3  "League Champion" is wrong on 161 rows of Season Games
+--------------------------------------------------------------------------------
+ In Season Games, the denormalized "League Champion" column reads "Runner-Up"
+ for the 2025 Dodgers on 161 of their 162 rows. Only Gm# 1 (3/18/2025) reads
+ "Champion". The 2025 Dodgers won the World Series, so "Champion" is correct
+ and the other 161 rows are wrong - this looks like a fill-down that was not
+ completed after the 2025 result was known.
+
+ The join key ("Unique" = "2025_Champion_Dodgers") is correct on all 162 rows,
+ and so is the hub, so the published Tableau workbook is unaffected: it reads
+ League Champion from the hub table, not from Season Games.
+
+ The same columns in PS Games were checked and are correct on all 161 rows.
+ Batting, Pitching and Fielding Year values match the hub on every row.
+
+ >> RECOMMENDATION: Because the hub is authoritative and the copies are not,
+    drop the five denormalized columns (League Champion, League, Team Name,
+    Team Location, Team Name Short) from Season Games and PS Games in any
+    cleaned release, and source them from WS Teams via the join. That removes
+    this class of error entirely.
+
+--------------------------------------------------------------------------------
+ 6.4  Two defects in PS Games "Series Standings"
+--------------------------------------------------------------------------------
+ a) Five rows hold the NUMBER 0 instead of the text "0 - 5" - the 2024 Yankees'
+    World Series rows. Excel appears to have evaluated the entry as arithmetic.
+    This is why the column has a mixed data type.
+
+ b) Seven rows read "4 -3" (no space before the 3) instead of "4 - 3" - the
+    2025 World Series rows for both the Dodgers and the Blue Jays. Any code
+    that parses this column by splitting on " - " will fail on them.
+
+ The equivalent running columns (W - L_S, W_S, L_S) are correct on these rows,
+ so the series results can be recovered from the last game of each series.
+
+--------------------------------------------------------------------------------
+ 6.5  PS Games: 16 rows where W/L disagrees with the score
+--------------------------------------------------------------------------------
+ This is the most significant accuracy issue in the file. In 16 of the 161
+ postseason rows the "W/L" flag and the R / RA columns contradict each other.
+
+ By comparison, Season Games is completely clean: all 1,619 rows have W/L
+ consistent with R vs RA, and every team's final cumulative W-L matches a tally
+ of its game results.
+
+ Two distinct patterns:
+
+ A) Five rows where R equals RA - an impossible tied result, so R or RA is
+    wrong on these rows:
+       2021 Braves       Division Series G1  vs MIL   R=1  RA=1   W/L=L
+       2022 Phillies     Division Series G2  vs ATL   R=0  RA=0   W/L=L
+       2022 Phillies     LCS G2              vs SDP   R=5  RA=5   W/L=L
+       2023 Diamondbacks LCS G1              vs PHI   R=3  RA=3   W/L=L
+       2023 Diamondbacks LCS G5              vs PHI   R=6  RA=6   W/L=L
+
+ B) Eleven rows where the team with more runs is marked as the loser, or vice
+    versa. A pairwise cross-check of the 29 World Series games (each present
+    twice, once per team) shows that R and RA ALWAYS mirror correctly between
+    the two rows of a game - so the scores are internally consistent and it is
+    the W/L flag that is unreliable:
+
+       2021 World Series G5    - W/L inverted on BOTH teams' rows
+                                 (Braves row: R=9 RA=5 marked L;
+                                  Astros row: R=5 RA=9 marked W)
+       2023 World Series G1-G5 - the Diamondbacks' five rows all read "W",
+                                 duplicating the Rangers' outcomes. The
+                                 Rangers' own rows are correct.
+       2024 LCS G5             - Dodgers row reads W with R=6 RA=12
+       2024 LCS G3             - Yankees row reads W with R=5 RA=7
+       2024 World Series G4    - W/L inverted on both teams' rows
+                                 (Dodgers R=4 RA=11 marked W;
+                                  Yankees R=11 RA=4 marked L)
+
+ Practical guidance: for postseason win/loss analysis, DERIVE the result from
+ the score - (R > RA) - rather than trusting the W/L column, or correct the 16
+ rows above before publishing. The 2025 rows are clean.
+
+--------------------------------------------------------------------------------
+ 6.6  Excel auto-converted four position codes into dates
+--------------------------------------------------------------------------------
+ The detailed position strings use Baseball-Reference notation in which a value
+ can look like a date to Excel. Two rows in Batting Stats column 34 ("Pos",
+ the second one) and two rows in Fielding Stats column 30 ("Pos") have been
+ stored as datetime values instead of text.
+
+ Additionally, many values in these columns are pure digit strings (e.g. "35",
+ "64") and have been stored as NUMBERS: 57 such rows in Batting Stats and 154
+ in Fielding Stats. The column therefore has a mixed type overall.
+
+ Fix: import these columns as text, and re-enter the four date-converted cells.
+
+--------------------------------------------------------------------------------
+ 6.7  "Player-additional" is incomplete
+--------------------------------------------------------------------------------
+ The Baseball-Reference player ID is the only stable identifier for a player in
+ this dataset (names are not unique and change spelling). It has two gaps:
+
+   - NOT POPULATED for either 2025 team in Batting Stats (48 rows, including
+     the 2 Team Totals rows) or Pitching Stats (80 rows). The 2025 seasons were
+     evidently added from a source or export that omitted the ID.
+   - Holds the SENTINEL VALUE -9999 on the Team Totals rows for 2021-2024:
+     8 rows each in Batting, Pitching and Fielding Stats. Treat -9999 as null.
+
+ Because of this, do not use Player-additional as a join key across the whole
+ dataset. Within a single team-season, "Unique + Player" is a verified unique
+ key in all three statistics sheets and is the safer choice.
+
+--------------------------------------------------------------------------------
+ 6.8  Fielding Stats stops at 2024
+--------------------------------------------------------------------------------
+ Fielding Stats contains 8 of the 10 team-seasons. Both 2025 teams - the
+ Dodgers and the Blue Jays - have zero rows. Any join from the hub to this
+ sheet must be an outer join, and any year-over-year fielding comparison should
+ be labelled as covering 2021-2024 only.
+
+--------------------------------------------------------------------------------
+ 6.9  Smaller notes
+--------------------------------------------------------------------------------
+  - Season Games "W/L" has four values, not two: W, L, W-wo, L-wo. Test with
+    "starts with W" rather than "= W", or 70 walk-off wins will be missed.
+  - Season Games "Z2" uses a BLANK to mean "home game" (809 rows). A blank here
+    is data, not a missing value - do not drop those rows.
+  - Season Games "GB" mixes text ("up 1.5", "Tied") with numbers. Parse it; do
+    not aggregate it.
+  - Season Games "Z1" is a scrape artifact containing only the word "boxscore"
+    on every row and can be dropped.
+  - Pitching Stats "Pos" (SP/RP/CL) is populated on only 109 of 342 rows. It is
+    an author annotation, not a complete Baseball-Reference column.
+  - Pitching "IP" and Fielding "Inn" use the baseball thirds convention (x.1 =
+    one third, x.2 = two thirds). Convert to outs before doing arithmetic.
+  - Extreme-looking values in Batting and Pitching (ERA of 81.00, OPS+ of -100,
+    Rbat+ of -358) are genuine: they belong to players with a handful of plate
+    appearances or a fraction of an inning. They are not errors, but they will
+    distort unweighted averages - weight by PA or IP.
+  - The 2021 Braves played 161 regular-season games rather than 162. This is
+    correct, not a missing row.
+  - "Opponite" is a consistent misspelling of "opponent" in the sheet name and
+    in five column names. Preserved deliberately to stay in sync with the
+    published Tableau workbook.
+
+================================================================================
+ 7. SUGGESTED CLEANUP FOR A DERIVED / ANALYTICAL RELEASE
+================================================================================
+
+ If you publish a cleaned second version alongside this raw one, the following
+ changes would resolve every issue in section 6 without changing the grain:
+
+   1. Standardise team codes: ATH/OAK, CWS/CHW, BRA/ATL    (section 6.1)
+   2. Convert Season Games "Game Date" from text to a real date, matching
+      PS Games                                             (section 6.2a)
+   3. Drop "Date Calc" (or split it into a clean month/day helper)
+                                                           (section 6.2b)
+   4. Rename Season Games "Time" to "Game Duration"        (section 6.2c)
+   5. Drop the five denormalized team columns from Season Games and PS Games;
+      source them from the hub instead                     (section 6.3)
+   6. Repair "Series Standings" - the five 0 values and the seven "4 -3"
+                                                           (section 6.4)
+   7. Recompute PS Games "W/L" from R vs RA, and correct the five impossible
+      tied scores against Baseball-Reference               (section 6.5)
+   8. Force both detailed "Pos" columns to text and repair the four
+      date-converted cells; rename the second Batting "Pos" to "Pos Detail"
+                                                           (section 6.6)
+   9. Replace -9999 in Player-additional with null, and backfill the 2025
+      player IDs                                           (section 6.7)
+  10. Either add the 2025 fielding rows or state the 2021-2024 scope in the
+      sheet name                                           (section 6.8)
+  11. Drop "Z1" and rename "Z2" to "Home/Away"; consider expanding
+      "Opponite" to "Opponent"                             (section 6.9)
+
+ Keeping the raw file unchanged and shipping the cleaned file separately is
+ recommended, so that the raw version continues to match the published Tableau
+ workbook exactly.
+
+================================================================================
+ 8. USING THE DATA
+================================================================================
+
+ Recommended reading order for a newcomer
+ ----------------------------------------
+   1. Load "WS Teams" first - 10 rows tell you the entire scope.
+   2. Join "Season Games" to it on Unique for the regular-season story.
+   3. Join "PS Games" to it on Unique for the postseason story.
+   4. Attach "Team Name Opponite" separately to each game sheet on Opp.
+   5. Treat "Batting Stats" / "Pitching Stats" / "Fielding Stats" as a separate
+      grain - aggregate them to Unique before combining with anything else.
+
+ Worked examples
+ ---------------
+   Regular-season win rate per team-season:
+       group Season Games by Unique
+       wins = count of rows where W/L starts with "W"
+       rate = wins / count of rows
+
+   Home vs away win rate:
+       split Season Games on Z2 ("@" = away, blank = home), then as above.
+
+   Day vs night win rate:
+       split Season Games on D/N.
+
+   Postseason run differential by round:
+       group PS Games by Unique and Series, sum(R) - sum(RA).
+       Order rounds with "Series #" descending for chronological order.
+
+   Team home-run total for a season:
+       filter Batting Stats to Player <> "Team Totals", then sum HR by Unique.
+       (Or read the "Team Totals" row directly - but never do both.)
+
+ Companion files in this data package
+ ------------------------------------
+ "Baseball Teams Logos.zip" ships alongside this workbook. It contains 30
+ transparent PNG logos, one per MLB club, at roughly 905 px on the longest edge
+ (~3.5 MB unzipped) - the shape images used by the Tableau visualization.
+ Filenames are not standardized and no column in this dataset maps to them
+ directly, so a small filename-to-team lookup is needed to join them
+ programmatically.
+
+ Attribution and licensing
+ -------------------------
+ The underlying statistics are the work of Baseball-Reference.com (Sports
+ Reference LLC); the team logos are sourced from SportsLogos.net. Both remain
+ subject to their owners' terms of use, and team names and logos are trademarks
+ of their respective clubs and of Major League Baseball.
+
+ This workbook is a derived compilation assembled for a data-visualization
+ project; it is offered for educational, analytical and portfolio use. Please
+ credit Baseball-Reference as the source of the statistics, SportsLogos.net for
+ the logos, and this dataset/visualization as the compilation. Check Sports
+ Reference's and SportsLogos.net's current terms before any commercial or
+ large-scale redistribution.
+
+ Suggested citation:
+   Johansson, John. "Data_Baseball_Road_To_World_Series_2021-2025" (2026).
+   Compiled from Baseball-Reference.com; logos from SportsLogos.net. Companion
+   dataset to the Tableau Public visualization "All In The Wins".
+   https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries
+
+================================================================================
+ END OF DOCUMENT
+================================================================================

@@ -1,0 +1,744 @@
+{
+  "name": "ai-chatbot-support-tickets",
+  "title": "AI Chatbot Support Tickets",
+  "description": "Synthetic IT help desk ticket dataset built for a Tableau proof-of-concept dashboard comparing AI chat-bot support against human IT escalation. Delivered as two workbooks - Actuals (2021-2026) and Projections (2022-2026) - sharing an identical 21-column schema for unioning.",
+  "version": "1.3.0",
+  "created": "2026-09-04",
+  "license": "Synthetic data - free for demo, training, and portfolio use",
+  "dataType": "synthetic",
+  "disclaimer": "All records are programmatically generated. No real people, tickets, or organizations are represented.",
+  "keywords": [
+    "it-help-desk",
+    "service-desk",
+    "ai-chatbot",
+    "ticket-escalation",
+    "tableau",
+    "synthetic-data",
+    "itsm",
+    "plan-vs-actual"
+  ],
+  "referenceDate": "2026-10-01",
+  "referenceDateNote": "Treated as 'today'. All open-ticket ages (Days Open) are measured against this date.",
+  "dashboardPurpose": [
+    "Compare AI-resolved tickets against tickets escalated to human IT support",
+    "Rank the six AI bots against each other by closure rate (Actual table only)",
+    "Compare open AI tickets, open escalation tickets, and closed tickets",
+    "Analyze ticket severity mix (High / Medium / Low) and its effect on escalation",
+    "Support Plan-vs-Actual comparison via the paired Projection table"
+  ],
+  "businessRules": {
+    "escalationRule": {
+      "description": "A ticket escalates to a human IT processor once it remains open past a severity-driven day threshold.",
+      "thresholds": {
+        "High": 7,
+        "Medium": 20,
+        "Low": 20
+      },
+      "unit": "days",
+      "validation": "0 violations across all 160971 Actual rows"
+    },
+    "ticketLifecycle": [
+      "Every ticket starts with an AI bot assigned (Assigned AI Bot always populated in the Actual table).",
+      "On escalation, Escalated Date and Assigned IT Processor are populated, Current Assigned Support flips from 'AI Bot' to 'IT Support', and Current Assigned Name becomes the human processor.",
+      "Days Open = Closed Date - Created Date for closed tickets, or referenceDate - Created Date for open tickets."
+    ],
+    "statusAlignment": {
+      "description": "Ticket Status, Ticket Sub-Status, and Ticket Processor Status are always mutually consistent.",
+      "validCombinationCount": 10,
+      "conflicts": 0
+    },
+    "openBacklog": {
+      "count": 2272,
+      "ageRangeDays": [
+        1,
+        90
+      ],
+      "distribution": "~91% aged 1-30 days, remainder 31-90 days",
+      "note": "All open tickets fall within 90 days of the reference date by construction, concentrating them in Jul-Sep 2026."
+    },
+    "requestorConsistency": "Each of the 12500 requestors has a fixed name, ID, and office location across all their tickets. Requestor ID is the identity key; duplicate full names exist by design.",
+    "escalationModel": {
+      "description": "Escalation likelihood is driven by the assigned bot's closure rate and the ticket's severity; Days Open is then generated on the correct side of the severity threshold. A weaker bot leaves more tickets unresolved past the threshold, so they escalate.",
+      "consistency": "The day-based escalation rule still holds exactly - Days Open, Escalated Date, and the status fields never contradict each other.",
+      "severityWeighting": "High-severity tickets escalate about 2.5x more often than Low/Medium within each bot's overall rate."
+    },
+    "september2026Reduction": {
+      "description": "September 2026 created-ticket volume was reduced in two passes.",
+      "originalVolume": 5769,
+      "afterFirstPass": 4096,
+      "afterSecondPass": 3096,
+      "totalReductionPct": 46.3,
+      "method": "First pass cut 29%, scaling the open backlog by the same 0.71 factor (open tickets are overwhelmingly September-created). Second pass removed a further 1,000 tickets from September's closed bucket only, leaving the 2,272-ticket open backlog intact.",
+      "compositionNote": "September now contains 2,058 open and 1,038 closed tickets, so roughly two thirds of the month is open backlog. Neighbouring months are almost entirely closed."
+    }
+  },
+  "resources": [
+    {
+      "name": "actuals",
+      "path": "AI Chatbot Support Tickets_Actuals.xlsx",
+      "format": "xlsx",
+      "mediatype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 19937063,
+      "rowCount": 160971,
+      "recordType": "Actual",
+      "temporalCoverage": {
+        "start": "2021-01-01",
+        "end": "2026-09-30"
+      },
+      "temporalNote": "2026 is partial (Jan 1 - Sep 30) because the reference date is 2026-10-01.",
+      "rowsByYear": {
+        "2021": 25240,
+        "2022": 30177,
+        "2023": 22630,
+        "2024": 23296,
+        "2025": 31142,
+        "2026": 28486
+      },
+      "keyDistributions": {
+        "ticketStatus": {
+          "Closed": 158699,
+          "Open": 2272
+        },
+        "ticketSubStatus": {
+          "Resolved": 135119,
+          "No Action": 12532,
+          "Cancelled": 11048,
+          "Open AI Ticket": 1478,
+          "Open Escalation": 530,
+          "User Feedback": 264
+        },
+        "ticketProcessorStatus": {
+          "Closed AI Ticket": 114922,
+          "Closed Escalation": 43777,
+          "Open AI Ticket": 1654,
+          "Open Escalation": 618
+        },
+        "severity": {
+          "Low": 83867,
+          "Medium": 54763,
+          "High": 22341
+        },
+        "ticketType": {
+          "Issue": 90149,
+          "Request": 70822
+        },
+        "currentAssignedSupport": {
+          "AI Bot": 116576,
+          "IT Support": 44395
+        }
+      },
+      "escalationRateBySeverityPct": {
+        "High": 56.8,
+        "Medium": 22.9,
+        "Low": 22.8
+      },
+      "daysOpen": {
+        "min": 0,
+        "max": 90,
+        "mean": 12.7
+      },
+      "distinctCounts": {
+        "requestors": 12500,
+        "itProcessors": 25,
+        "aiBots": 6,
+        "officeLocations": 10,
+        "teams": 7,
+        "issueCategories": 12,
+        "issueTypes": 54
+      },
+      "rowsBy2026Month": {
+        "2026-01": 3147,
+        "2026-02": 3147,
+        "2026-03": 3147,
+        "2026-04": 3147,
+        "2026-05": 3147,
+        "2026-06": 3147,
+        "2026-07": 3166,
+        "2026-08": 3342,
+        "2026-09": 3096
+      },
+      "overallEscalationRatePct": 27.6,
+      "sheet": "Actual",
+      "headerRow": 1,
+      "formatting": "Bold frozen header row, autofilter enabled, Arial throughout. Dates stored as real Excel date values (yyyy-mm-dd), Days Open as a true number."
+    },
+    {
+      "name": "projections",
+      "path": "AI Chatbot Support Tickets_Projections.xlsx",
+      "format": "xlsx",
+      "mediatype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 17326082,
+      "rowCount": 152073,
+      "recordType": "Projection",
+      "temporalCoverage": {
+        "start": "2022-01-01",
+        "end": "2026-12-31"
+      },
+      "rowsByYear": {
+        "2022": 30739,
+        "2023": 22040,
+        "2024": 24690,
+        "2025": 32697,
+        "2026": 41907
+      },
+      "methodology": {
+        "2026": "Annualizes the Actual Jan-Sep 2026 run rate (31000 / 9 * 12 = 41333), since a full-year plan cannot sensibly fall below nine months of realized actuals.",
+        "2022-2025": "Each year's own Actual volume target used as the planning baseline, with independent random jitter (+/-3% at year level, +/-15% month to month), so Plan and Actual land close but never match exactly."
+      },
+      "allClosed": true,
+      "allClosedNote": "A projection represents expected completed volume for capacity planning, not a live open backlog. Open, User Feedback, and open-side processor statuses never appear in this table.",
+      "keyDistributions": {
+        "ticketStatus": {
+          "Closed": 152073
+        },
+        "ticketSubStatus": {
+          "Resolved": 129445,
+          "No Action": 11968,
+          "Cancelled": 10660
+        },
+        "ticketProcessorStatus": {
+          "Closed AI Ticket": 120792,
+          "Closed Escalation": 31281
+        },
+        "severity": {
+          "Low": 79323,
+          "Medium": 51834,
+          "High": 20916
+        },
+        "ticketType": {
+          "Issue": 84714,
+          "Request": 67359
+        },
+        "currentAssignedSupport": {
+          "AI Bot": 120792,
+          "IT Support": 31281
+        }
+      },
+      "escalationRateBySeverityPct": {
+        "High": 51,
+        "Medium": 16.1,
+        "Low": 15.5
+      },
+      "daysOpen": {
+        "min": 1,
+        "max": 40,
+        "mean": 11.7
+      },
+      "blankByDesign": [
+        "Requestor Name",
+        "Requestor ID",
+        "Office Location",
+        "Escalated Date",
+        "Assigned AI Bot",
+        "Assigned IT Processor",
+        "Current Assigned Name"
+      ],
+      "unchangedSince": "1.0.0",
+      "unchangedNote": "Left untouched by the v1.1.0 bot-rate change. Carries no Assigned AI Bot value, so per-bot analysis does not apply.",
+      "sheet": "Projection",
+      "headerRow": 1,
+      "formatting": "Bold frozen header row, autofilter enabled, Arial throughout. Dates stored as real Excel date values (yyyy-mm-dd), Days Open as a true number."
+    }
+  ],
+  "schema": {
+    "note": "Identical across both tables. Column order is fixed and must be preserved for a clean union.",
+    "primaryKey": "Ticket ID",
+    "fields": [
+      {
+        "position": 1,
+        "name": "Ticket ID",
+        "type": "string",
+        "description": "Unique ticket identifier.",
+        "pattern": "TCK-###### (Actual) or PRJ-###### (Projection)",
+        "nullable": false
+      },
+      {
+        "position": 2,
+        "name": "Requestor Name",
+        "type": "string",
+        "description": "First and last name of the employee who submitted the ticket. Drawn from culture-grouped name pools weighted to loosely resemble each office city's population mix. Duplicate names exist by design.",
+        "nullable": true,
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 3,
+        "name": "Requestor ID",
+        "type": "string",
+        "description": "Stable unique identifier for the requestor. This is the identity key, not the name.",
+        "pattern": "USR-######",
+        "distinctValues": 12500,
+        "nullable": true,
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 4,
+        "name": "Office Location",
+        "type": "string",
+        "description": "US office city the requestor belongs to. Fixed per requestor across all their tickets.",
+        "enum": [
+          "New York, NY",
+          "Los Angeles, CA",
+          "Chicago, IL",
+          "Houston, TX",
+          "Phoenix, AZ",
+          "San Francisco, CA",
+          "Seattle, WA",
+          "Miami, FL",
+          "Atlanta, GA",
+          "Boston, MA"
+        ],
+        "nullable": true,
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 5,
+        "name": "Team Name",
+        "type": "string",
+        "description": "IT team that owns the ticket. Currently assigned independently of Issue Category.",
+        "enum": [
+          "Service Desk",
+          "Software Engineering",
+          "Security and Governance",
+          "Networking",
+          "Hardware and Devices",
+          "IT Architecture",
+          "Cloud Operations"
+        ],
+        "nullable": false
+      },
+      {
+        "position": 6,
+        "name": "Issue Category",
+        "type": "string",
+        "description": "High-level issue grouping oriented to AI chat support requests.",
+        "enum": [
+          "Account Access",
+          "MFA",
+          "Software Installs",
+          "App Errors",
+          "Hardware",
+          "Network",
+          "VPN/Remote Access",
+          "Email/Collaboration",
+          "Mobile/BYOD",
+          "Printer/Peripheral",
+          "Data Recovery",
+          "AI Assistant"
+        ],
+        "nullable": false
+      },
+      {
+        "position": 7,
+        "name": "Issue Type",
+        "type": "string",
+        "description": "Detailed issue classification nested under Issue Category. Each Issue Type carries its own Ticket Type and Severity distribution, so those fields correlate with the nature of the issue.",
+        "distinctValues": 54,
+        "hierarchy": "Issue Category > Issue Type (each Issue Type belongs to exactly one Issue Category)",
+        "nullable": false
+      },
+      {
+        "position": 8,
+        "name": "Ticket Type",
+        "type": "string",
+        "description": "Whether the ticket is a service request or a reported problem. Weighted per Issue Type.",
+        "enum": [
+          "Request",
+          "Issue"
+        ],
+        "nullable": false
+      },
+      {
+        "position": 9,
+        "name": "Severity",
+        "type": "string",
+        "description": "Business impact level. Drives the escalation threshold (High escalates after 7 days, Medium/Low after 20).",
+        "enum": [
+          "High",
+          "Medium",
+          "Low"
+        ],
+        "nullable": false
+      },
+      {
+        "position": 10,
+        "name": "Ticket Status",
+        "type": "string",
+        "description": "Top-level ticket state.",
+        "enum": [
+          "Open",
+          "Closed"
+        ],
+        "nullable": false,
+        "notes": "Always 'Closed' in the Projection table."
+      },
+      {
+        "position": 11,
+        "name": "Ticket Sub-Status",
+        "type": "string",
+        "description": "Detailed state within Ticket Status. Adds the 'User Feedback' waiting-on-user nuance that Ticket Processor Status omits.",
+        "conditionalEnum": {
+          "Open": [
+            "Open AI Ticket",
+            "Open Escalation",
+            "User Feedback"
+          ],
+          "Closed": [
+            "Resolved",
+            "No Action",
+            "Cancelled"
+          ]
+        },
+        "nullable": false
+      },
+      {
+        "position": 12,
+        "name": "Ticket Processor Status",
+        "type": "string",
+        "description": "Clean AI-vs-escalation cut crossed with open/closed state. Recommended field for AI-vs-human comparisons.",
+        "conditionalEnum": {
+          "Open": [
+            "Open AI Ticket",
+            "Open Escalation"
+          ],
+          "Closed": [
+            "Closed AI Ticket",
+            "Closed Escalation"
+          ]
+        },
+        "nullable": false
+      },
+      {
+        "position": 13,
+        "name": "Created Date",
+        "type": "date",
+        "format": "yyyy-mm-dd",
+        "description": "Date the ticket was submitted. Weekend volume is intentionally down-weighted.",
+        "nullable": false
+      },
+      {
+        "position": 14,
+        "name": "Escalated Date",
+        "type": "date",
+        "format": "yyyy-mm-dd",
+        "description": "Date the ticket was handed from the AI bot to a human IT processor. Populated only for escalated tickets.",
+        "nullable": true,
+        "populatedWhen": "Ticket Processor Status contains 'Escalation'",
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 15,
+        "name": "Closed Date",
+        "type": "date",
+        "format": "yyyy-mm-dd",
+        "description": "Date the ticket was closed. Populated for closed tickets only.",
+        "nullable": true,
+        "populatedWhen": "Ticket Status = 'Closed'"
+      },
+      {
+        "position": 16,
+        "name": "Days Open",
+        "type": "integer",
+        "description": "Closed Date minus Created Date for closed tickets; reference date (2026-10-01) minus Created Date for open tickets.",
+        "range": {
+          "Actual": [
+            0,
+            90
+          ],
+          "Projection": [
+            1,
+            40
+          ]
+        },
+        "nullable": false
+      },
+      {
+        "position": 17,
+        "name": "Assigned AI Bot",
+        "type": "string",
+        "description": "AI chat bot that initially handled the ticket. Always populated in the Actual table, since every ticket starts with AI. Each bot has a distinct closure rate (see botClosureRates).",
+        "enum": [
+          "Chad Bot",
+          "Alex Bot",
+          "Ralph Bot",
+          "Phil Bot",
+          "Kaki Bot",
+          "Nico Bot"
+        ],
+        "nullable": true,
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 18,
+        "name": "Assigned IT Processor",
+        "type": "string",
+        "description": "Named human IT support staff member the ticket escalated to. Populated only for escalated tickets.",
+        "distinctValues": 25,
+        "nullable": true,
+        "populatedWhen": "Ticket Processor Status contains 'Escalation'",
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 19,
+        "name": "Current Assigned Support",
+        "type": "string",
+        "description": "Which support tier currently owns the ticket.",
+        "enum": [
+          "AI Bot",
+          "IT Support"
+        ],
+        "nullable": false
+      },
+      {
+        "position": 20,
+        "name": "Current Assigned Name",
+        "type": "string",
+        "description": "Name of the current owner - either the AI bot name or the human IT processor name, matching Current Assigned Support.",
+        "nullable": true,
+        "blankIn": [
+          "Projection"
+        ]
+      },
+      {
+        "position": 21,
+        "name": "Record Type",
+        "type": "string",
+        "description": "Distinguishes the two tables after a union.",
+        "enum": [
+          "Actual",
+          "Projection"
+        ],
+        "nullable": false
+      }
+    ]
+  },
+  "issueTypeHierarchy": {
+    "Account Access": [
+      "Password Reset",
+      "Account Locked",
+      "Forgot Username",
+      "New Account Setup",
+      "Account Deactivation",
+      "Suspicious Login"
+    ],
+    "MFA": [
+      "MFA Enrollment",
+      "MFA Device Lost",
+      "MFA Push Failed",
+      "MFA Bypass Request"
+    ],
+    "Software Installs": [
+      "Software Install",
+      "License Renewal",
+      "Update/Patch Failure",
+      "Software Uninstall",
+      "License Compliance"
+    ],
+    "App Errors": [
+      "App Crash",
+      "App Slowness",
+      "App Login Error",
+      "Data Sync Error",
+      "App Outage"
+    ],
+    "Hardware": [
+      "Laptop/Desktop Issue",
+      "New Equipment",
+      "Equipment Replacement",
+      "Monitor Issue",
+      "Battery/Power Issue"
+    ],
+    "Network": [
+      "WiFi Issue",
+      "LAN Issue",
+      "Network Outage",
+      "Slow Network"
+    ],
+    "VPN/Remote Access": [
+      "VPN Failure",
+      "VPN Access",
+      "Remote Desktop Issue",
+      "VDI Issue"
+    ],
+    "Email/Collaboration": [
+      "Email Send/Receive",
+      "Mailbox Full",
+      "Distribution List",
+      "Calendar Sync",
+      "Teams/Slack Issue",
+      "Shared Drive Access"
+    ],
+    "Mobile/BYOD": [
+      "Mobile Enrollment",
+      "Mobile App Config",
+      "Lost/Stolen Device",
+      "BYOD Access"
+    ],
+    "Printer/Peripheral": [
+      "Printer Not Working",
+      "Print Driver Install",
+      "Scanner Issue"
+    ],
+    "Data Recovery": [
+      "File Recovery",
+      "Data Deletion",
+      "Backup Failure",
+      "Folder Permission"
+    ],
+    "AI Assistant": [
+      "AI Wrong Resolution",
+      "AI Bot Timeout",
+      "Request Human Agent",
+      "Chatbot Feedback"
+    ]
+  },
+  "knownCharacteristics": [
+    {
+      "id": "separate-populations",
+      "severity": "important",
+      "description": "Actual and Projection are separate populations and are NOT additive. Union them for side-by-side comparison; never sum them into a single total."
+    },
+    {
+      "id": "escalation-rate-drift",
+      "severity": "important",
+      "description": "Actual runs 27.6% escalation overall (High 56.8% / Medium 22.9% / Low 22.8%); Projection runs 20.6% (High 51.0% / Medium 16.1% / Low 15.5%). The projection predates the per-bot closure model and was not regenerated, so the plan under-forecasts escalations by roughly 7 points. Regenerate the projection against the current bot model if Plan-vs-Actual escalation parity is needed."
+    },
+    {
+      "id": "bot-rates-actual-only",
+      "severity": "important",
+      "description": "The Projection table has no Assigned AI Bot value, so any bot-level chart must filter to Record Type = Actual."
+    },
+    {
+      "id": "sept-2026-cluster",
+      "severity": "informational",
+      "description": "September 2026 has been cut twice and is now the SMALLEST 2026 month (3,096 vs ~3,150 for Jan-Jun), but it is also lopsidedly open: 2,058 of its 3,096 tickets are open backlog, versus almost none in other months. This is a consequence of the 90-day maximum ticket age plus the 2026-10-01 reference date. Filter to Ticket Status = Closed for a clean monthly creation-volume trend."
+    },
+    {
+      "id": "2026-partial-year",
+      "severity": "important",
+      "description": "2026 Actual covers Jan-Sep only while 2026 Projection covers all 12 months. Any 2026 Plan-vs-Actual comparison is 9 months against 12 unless filtered."
+    },
+    {
+      "id": "no-2021-projection",
+      "severity": "informational",
+      "description": "The Projection table begins at 2022. There is no 2021 projection."
+    },
+    {
+      "id": "zero-days-open",
+      "severity": "informational",
+      "description": "Days Open of 0 exists in the Actual table, representing same-day resolutions."
+    },
+    {
+      "id": "team-category-independence",
+      "severity": "informational",
+      "description": "Team Name is assigned independently of Issue Category, so a Hardware ticket can be owned by Cloud Operations. Realistic routing correlation is not modeled."
+    },
+    {
+      "id": "illustrative-demographics",
+      "severity": "important",
+      "description": "The city-to-name-origin weighting approximates real population patterns for realism only. It is not census-accurate and must not be used for demographic analysis."
+    }
+  ],
+  "provenance": {
+    "generator": "Node.js scripts (generate_tickets.js, generate_projections.js, shared.js)",
+    "reproducible": true,
+    "reproducibilityNote": "Each run produces different random draws within the same statistical targets and business rules.",
+    "structuralInspiration": "Column shape and a few categorical values were loosely modeled on a public sample help desk dataset; all values here are newly generated."
+  },
+  "changelog": [
+    {
+      "version": "1.3.0",
+      "date": "2026-09-04",
+      "changes": [
+        "Renamed the dataset to \"AI Chatbot Support Tickets\".",
+        "Documented resources reduced to the two delivery workbooks: AI Chatbot Support Tickets_Actuals.xlsx and AI Chatbot Support Tickets_Projections.xlsx.",
+        "The combined AI Chatbot Support Tickets_Data.xlsx (both tables as two sheets) is redundant with those two and is no longer documented as a primary resource.",
+        "No data changes - row counts and distributions are unchanged from 1.2.0."
+      ]
+    },
+    {
+      "version": "1.2.0",
+      "date": "2026-09-03",
+      "changes": [
+        "September 2026 reduced by a further 1,000 tickets (4,096 -> 3,096). The cut came entirely off September closed tickets, so the month is now open-heavy: 2,058 of 3,096 are open backlog.",
+        "Actual table regenerated; Projection table again left untouched."
+      ]
+    },
+    {
+      "version": "1.1.0",
+      "date": "2026-09-03",
+      "changes": [
+        "Each AI bot now has a distinct closure rate spread across 58%-85% (previously all six sat at ~84%). Actual table only.",
+        "September 2026 volume reduced by 29% (5,769 -> 4,096 tickets created).",
+        "Added split single-table workbooks (_Actuals.xlsx, _Projections.xlsx) so each file stays under 25 MB.",
+        "Projection table left untouched; it carries no bot assignment and was not regenerated."
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-09-02",
+      "changes": [
+        "Initial documented release."
+      ]
+    }
+  ],
+  "botClosureRates": {
+    "definition": "Share of a bot's tickets resolved WITHOUT escalating to a human IT processor.",
+    "appliesTo": "Actual table only - the Projection table has no Assigned AI Bot value.",
+    "targetRange": [
+      0.58,
+      0.85
+    ],
+    "volumeNote": "Ticket volume is split roughly evenly across the six bots (~16.7% each); they differ in outcome, not workload.",
+    "rates": {
+      "Kaki Bot": {
+        "closureRatePct": 84.7,
+        "escalationRatePct": 15.3,
+        "tickets": 26557
+      },
+      "Alex Bot": {
+        "closureRatePct": 81.3,
+        "escalationRatePct": 18.7,
+        "tickets": 26756
+      },
+      "Chad Bot": {
+        "closureRatePct": 76.2,
+        "escalationRatePct": 23.8,
+        "tickets": 27086
+      },
+      "Nico Bot": {
+        "closureRatePct": 70,
+        "escalationRatePct": 30,
+        "tickets": 26916
+      },
+      "Ralph Bot": {
+        "closureRatePct": 64.3,
+        "escalationRatePct": 35.7,
+        "tickets": 26694
+      },
+      "Phil Bot": {
+        "closureRatePct": 58.1,
+        "escalationRatePct": 41.9,
+        "tickets": 26962
+      }
+    }
+  },
+  "additionalFiles": [
+    {
+      "path": "AI Chatbot Support Tickets_Data.xlsx",
+      "description": "Optional convenience file: both tables as two sheets (Actual, Projection) in one workbook. Redundant with the two documented resources above.",
+      "documented": false
+    }
+  ]
+}

@@ -7,14 +7,223 @@
  "All In The Wins | #VOTD" by John Johansson
  https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries
 
- Document version : 1.0
- Generated        : 2026-09-12
+ Document version : 1.1
+ Generated        : 2026-09-14
  Source file      : Data_Baseball_Road_To_World_Series_2021-2025.xlsx
  File size        : 564,422 bytes (~551 KB)
  Format           : Microsoft Excel Workbook (.xlsx), 6 worksheets
  Encoding         : UTF-8 (accented player names are preserved,
                     e.g. "Teoscar Hernandez" is stored as "Teoscar Hernandez"
                     with the accented a)
+
+ This document serves as the METADATA RECORD for the data package. Section 0
+ carries the formal descriptive metadata; sections 1-8 describe and document
+ the data; sections 9-14 carry the conventions, lineage, fitness-for-use and
+ stewardship metadata; appendices A-C carry the controlled vocabularies, the
+ compact field manifest and machine-readable metadata for automated catalogues.
+
+================================================================================
+ CONTENTS
+================================================================================
+
+   0. DATASET METADATA SUMMARY
+        0.1  Core descriptive metadata
+        0.2  File manifest and checksums
+        0.3  Coverage
+        0.4  Structural summary
+        0.5  Keywords and classification
+   1. OVERVIEW
+   2. PROVENANCE AND RELATIONSHIP TO THE TABLEAU WORKBOOK
+   3. THE DATA MODEL - HOW THE SHEETS SHOULD BE JOINED
+   4. WORKSHEET INVENTORY
+   5. DATA DICTIONARY
+   6. DATA QUALITY NOTES AND KNOWN ISSUES
+   7. SUGGESTED CLEANUP FOR A DERIVED / ANALYTICAL RELEASE
+   8. USING THE DATA
+   9. DATA CONVENTIONS
+       9.1  Character encoding and locale
+       9.2  Missing-value conventions
+       9.3  Data-type and format conventions
+       9.4  Notation conventions used inside values
+  10. PROVENANCE AND PROCESSING LINEAGE
+  11. FITNESS FOR USE
+  12. MAINTENANCE, VERSIONING AND CHANGE LOG
+  13. PRIVACY, ETHICS AND TRADEMARK
+  14. CONTACT AND RELATED RESOURCES
+   A. APPENDIX A - CONTROLLED VOCABULARIES
+   B. APPENDIX B - COMPACT FIELD MANIFEST
+   C. APPENDIX C - MACHINE-READABLE METADATA
+
+================================================================================
+ 0. DATASET METADATA SUMMARY
+================================================================================
+
+ A catalogue-ready summary of the data package. Field names follow common
+ dataset-metadata vocabularies (DCAT / Dublin Core / schema.org Dataset) so
+ that this block can be transcribed into a data portal, a repository record or
+ a Frictionless "datapackage.json" without further research. Appendix C carries
+ the same facts in machine-readable form.
+
+--------------------------------------------------------------------------------
+ 0.1  Core descriptive metadata
+--------------------------------------------------------------------------------
+
+  Title              : Road to the World Series - MLB Data, 2021-2025
+  Alternative title  : Data_Baseball_Road_To_World_Series_2021-2025
+  Identifier (slug)  : baseball-road-to-world-series-2021-2025
+  Description        : Complete regular-season and postseason game logs, plus
+                       season-level batting, pitching and fielding statistics,
+                       for every team that reached the MLB World Series in the
+                       2021-2025 seasons (10 team-seasons).
+  Dataset version    : 1.0  (the data file itself; see section 12)
+  Document version   : 1.1  (this metadata record)
+  Creator / compiler : John Johansson
+  Publisher          : John Johansson
+  Contact            : via the Tableau Public profile linked in section 14
+  Date created       : 2026-09-12  (consolidated workbook first assembled)
+  Date modified      : 2026-09-12  (data file last written)
+  Date of this record: 2026-09-14
+  Release status     : Public
+  Access rights      : Open - no authentication, no request process
+  Language           : en (English; United States conventions)
+  Data source        : Baseball-Reference.com (Sports Reference LLC)
+  Logo source        : SportsLogos.net
+  Rights statement   : Derived compilation for educational, analytical and
+                       portfolio use. Underlying statistics and logos remain
+                       subject to their owners' terms. See sections 8 and 13.
+  Subject / theme    : Sports; Baseball; Major League Baseball; Sports analytics
+  Documentation      : This file
+  Related visualization :
+                       "All In The Wins | #VOTD"
+                       https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries
+
+--------------------------------------------------------------------------------
+ 0.2  File manifest and checksums
+--------------------------------------------------------------------------------
+
+ Two distributable files make up the data package. Checksums are provided so
+ consumers can verify an intact download; recompute them after any edit.
+
+  File 1 - the dataset
+    Filename        : Data_Baseball_Road_To_World_Series_2021-2025.xlsx
+    Media type      : application/vnd.openxmlformats-officedocument
+                      .spreadsheetml.sheet
+    Size            : 564,422 bytes
+    Worksheets      : 6
+    Data rows       : 2,909 (excluding header rows)
+    Columns         : 184 across all sheets
+    Last modified   : 2026-09-12 14:58:23 (-05:00)
+    SHA-256         : 2201b857bf6ba228a8e817d78b9bfa2d87786c782a25fae716556eef08fca8cb
+    MD5             : bdbb15ceb1bacfaf1d6a842b336e1036
+
+  File 2 - the logo images
+    Filename        : Baseball Teams Logos.zip
+    Media type      : application/zip
+    Size            : 3,475,595 bytes compressed
+    Contents        : 31 entries - one folder ("Baseball Teams Logos/") plus
+                      30 PNG images, one per MLB club
+    Uncompressed    : 3,502,082 bytes
+    Image format    : PNG with alpha transparency, approx. 905 px on the
+                      longest edge (585-905 px range)
+    Last modified   : 2026-09-12 15:14:07 (-05:00)
+    SHA-256         : 9e7cf5f8f51158751012d098850b463507ce364e00522ce55eca38e98219b0ad
+    MD5             : ce123b7015c9d4991b56dc532a054800
+
+  Accompanying documentation (not part of the checksummed data package)
+    README.md  - short orientation for the repository landing page
+    DOCUMENTATION_Baseball_Road_To_World_Series_2021-2025.txt - this file
+
+ Logo filenames are not standardized: 8 use the club nickname in PascalCase
+ (e.g. "Dodgers.png"), 21 use lowercase words separated by underscores (e.g.
+ "toronto_blue_jays.png"), and one retains its original source filename
+ ("colorado_rockies_logo_primary_20171892.png"). No column in the dataset maps
+ to these filenames, so a manual filename-to-team lookup is required to join
+ the images to the data programmatically.
+
+--------------------------------------------------------------------------------
+ 0.3  Coverage
+--------------------------------------------------------------------------------
+
+  Temporal coverage (actual observed dates in the data)
+    Overall             : 2021-04-01 to 2025-11-01
+    Regular season rows : 2021-04-01 to 2025-09-28
+    Postseason rows     : 2021-10-07 to 2025-11-01
+
+    Per season (regular season | postseason):
+      2021 : 2021-04-01 to 2021-10-03 | 2021-10-07 to 2021-11-02
+      2022 : 2022-04-07 to 2022-10-05 | 2022-10-07 to 2022-11-05
+      2023 : 2023-03-30 to 2023-10-01 | 2023-10-03 to 2023-11-01
+      2024 : 2024-03-20 to 2024-09-29 | 2024-10-05 to 2024-10-30
+      2025 : 2025-03-18 to 2025-09-28 | 2025-09-30 to 2025-11-01
+
+    Temporal granularity : one calendar day (individual games)
+    Note: the postseason maxima above are game dates within the sheets; the
+    "Game Date" column in PS Games is the authoritative date field for
+    postseason rows. Fielding Stats covers seasons 2021-2024 only.
+
+  Spatial coverage
+    Countries          : United States (29 clubs), Canada (1 club - Toronto)
+    Granularity        : club / metropolitan area. No stadium names, no
+                         coordinates, no venue identifiers are present.
+    Note: the dataset records WHICH team played, and whether the subject team
+    was home or away (Season Games "Z2"), but not WHERE the game was played.
+    Neutral-site games are not distinguishable.
+
+  Entity coverage
+    Subject teams      : 10 team-seasons (8 distinct clubs)
+    Opponent clubs     : all 30 MLB franchises appear in the lookup sheet;
+                         31 distinct opponent codes appear in Season Games and
+                         21 in PS Games (see section 6.1 on code mismatches)
+    Players            : 273 distinct names in Batting, 288 in Pitching,
+                         379 in Fielding - subject teams only
+    Universe           : NOT league-wide. Only World Series participants have
+                         game logs and player statistics. See section 1.
+
+--------------------------------------------------------------------------------
+ 0.4  Structural summary
+--------------------------------------------------------------------------------
+
+  Physical model     : single Excel workbook, 6 worksheets, one table per sheet
+  Logical model      : star / snowflake - one hub dimension, four fact tables,
+                       one lookup used twice (see section 3)
+  Primary key        : "Unique" (text) on WS Teams
+  Header row         : row 1 of every sheet; data begins in row 2
+  Structural notes   : no merged cells, no blank leading rows, no footnote or
+                       total rows appended below the data, no formulas (all
+                       cells are static values), no hidden sheets
+  Aggregate rows     : the three statistics sheets carry in-line "Team Totals"
+                       rows mixed with player rows (see section 5.5)
+  Duplicate headers  : Batting Stats has two columns named "Pos"
+                       (see section 5.5)
+
+  Row and column counts by sheet:
+
+    Sheet                 Data rows   Columns
+    -------------------   ---------   -------
+    Season Games              1,619        37
+    WS Teams                     10        10
+    Team Name Opponite           30         5
+    PS Games                    161        25
+    Batting Stats               321        36
+    Pitching Stats              342        39
+    Fielding Stats              426        32
+    -------------------   ---------   -------
+    TOTAL                     2,909       184
+
+--------------------------------------------------------------------------------
+ 0.5  Keywords and classification
+--------------------------------------------------------------------------------
+
+  Keywords   : MLB, Major League Baseball, World Series, baseball, game log,
+               box score, season statistics, batting, pitching, fielding,
+               postseason, playoffs, win rate, Baseball-Reference, sports
+               analytics, Tableau, data visualization, 2021, 2022, 2023, 2024,
+               2025
+  Categories : Sports and recreation; Statistics
+  Data type  : Structured tabular; observational; secondary (compiled from a
+               published source, not directly measured)
+  Audience   : Data-visualization practitioners, sports analysts, students,
+               portfolio reviewers
 
 ================================================================================
  1. OVERVIEW
@@ -1123,6 +1332,855 @@ Treating each sheet as a table of the same name:
    Compiled from Baseball-Reference.com; logos from SportsLogos.net. Companion
    dataset to the Tableau Public visualization "All In The Wins".
    https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries
+
+================================================================================
+ 9. DATA CONVENTIONS
+================================================================================
+
+ The rules a parser needs in order to read the file correctly. Sheet-specific
+ exceptions are flagged in section 5 and section 6.
+
+--------------------------------------------------------------------------------
+ 9.1  Character encoding and locale
+--------------------------------------------------------------------------------
+  Encoding            : UTF-8. Non-ASCII characters occur and are intentional -
+                        35 player names in Batting Stats carry Latin-1
+                        Supplement accents (a, e, i, n, o, u with diacritics),
+                        for example "Teoscar Hernandez" and "Andres Gimenez"
+                        are stored with their accented characters. Read the
+                        file as UTF-8 or those names will be mangled.
+  Locale conventions  : United States English.
+  Decimal separator   : period (.)
+  Thousands separator : none - numbers are stored unformatted
+  Negative numbers    : leading minus sign (e.g. -1.6), not parentheses
+  Date order          : month/day/year wherever dates appear as text
+  Text case           : mixed; the "Series" column in PS Games is the only
+                        column stored in upper case throughout
+  Whitespace          : no leading or trailing padding was observed in key
+                        columns; the one known spacing defect is "4 -3" in
+                        PS Games "Series Standings" (section 6.4)
+
+--------------------------------------------------------------------------------
+ 9.2  Missing-value conventions
+--------------------------------------------------------------------------------
+ There are four distinct ways an absent value is represented. Only the first is
+ unambiguous, so do not apply a blanket "fill or drop nulls" rule.
+
+  1. EMPTY CELL - genuine missing or not-applicable data. This is the normal
+     case and covers most of the null counts in section 5.
+
+  2. EMPTY CELL USED AS A MEANINGFUL VALUE - the blank IS the datum:
+       Season Games "Z2"  : blank = the subject team played at HOME (809 rows).
+                            Never drop or impute these.
+       Season Games "Inn" : blank = the game went the standard 9 innings
+                            (1,465 rows).
+       Season Games "Save": blank = no save was recorded in the game (834 rows).
+
+  3. SENTINEL VALUE -9999 - used in "Player-additional" on the Team Totals rows
+     of Batting, Pitching and Fielding Stats (8 rows each, seasons 2021-2024).
+     Convert to null on import. This is the only sentinel value in the file;
+     no other column uses a numeric placeholder for missing data.
+
+  4. STRUCTURALLY ABSENT ROWS - whole groups of rows that simply do not exist,
+     rather than rows with empty cells:
+       Fielding Stats has no rows at all for the two 2025 team-seasons.
+       PS Games has no populated cumulative postseason record for 2025
+       (columns "W - L", "W", "L" are empty on all 35 of those rows).
+     Use outer joins and state the reduced coverage rather than treating these
+     as zeroes.
+
+  Not-applicable versus missing: several columns in Fielding Stats are catcher-
+  only (PB, WP, SB, CS, CS%, Pick - 384 blanks each). A blank there means the
+  statistic does not apply to that player's position, not that it is unknown.
+  The same holds for Batting rate statistics (BA, OBP, SLG, OPS, OPS+, rOBA,
+  Rbat+ - 53 blanks each), which are undefined for players with no at bats.
+
+--------------------------------------------------------------------------------
+ 9.3  Data-type and format conventions
+--------------------------------------------------------------------------------
+  Dates      : Two representations coexist and the correct one differs by sheet.
+                 PS Games "Game Date"      : native Excel date (serial).
+                 Season Games "Game Date"  : TEXT, "M/D/YYYY", no leading
+                                             zeros, e.g. "3/20/2024".
+                 Season Games "Date (OG)"  : TEXT display label, no year.
+                 Season Games "Date Calc"  : mixed date/text plotting helper -
+                                             not a usable date (section 6.2b).
+               Authoritative date fields: "Game Date" in each game sheet, after
+               parsing the Season Games one to a date.
+
+  Times      : Season Games "Time" is an Excel TIME value representing a
+               DURATION (game length), not a clock time. 03:05 = 3 h 5 min.
+               There are no first-pitch times anywhere in the dataset.
+
+  Booleans   : only WS Teams "Wild Card Bye", stored as native Excel TRUE/FALSE.
+               Every other yes/no field is text ("Yes"/"No" in Season Games
+               "2 Games").
+
+  Integers   : stored as whole numbers with no formatting. Counting statistics
+               are non-negative; indexed and run-value statistics (OPS+,
+               Rbat+, Rtot, Rdrs and their /yr variants, WAR) can be negative.
+
+  Decimals   : stored as raw floating-point values, not as formatted strings.
+               Rate statistics (BA, OBP, SLG, OPS, rOBA, Fld%, W-L%) are
+               proportions in the 0-1 range and are NOT pre-multiplied by 100.
+               The one exception is Fielding "CS%", which IS expressed on a
+               0-100 scale. Precision is inherited from the source and varies
+               by column (typically 2-3 decimal places).
+
+  Mixed-type : six columns hold more than one physical type in the same column
+               and will import as text or object unless coerced:
+                 Season Games "GB"               (text + numeric)
+                 Season Games "Date Calc"        (date + text)
+                 PS Games "Series Standings"     (text + numeric)
+                 Batting Stats "Pos" [2nd]       (text + numeric + date)
+                 Fielding Stats "Pos"            (text + numeric + date)
+                 Player-additional (all 3 sheets)(text + numeric sentinel)
+
+  Units      : all counting statistics are plain counts of events. Attendance
+               is a count of people. "Time" is hours:minutes. "IP" and "Inn"
+               use the baseball thirds convention described in 9.4. Rate
+               statistics per 9 innings (H9, HR9, BB9, SO9, RF/9, lgRF9) are
+               per-nine-innings rates. No monetary, distance, weight or
+               temperature units appear in the dataset.
+
+--------------------------------------------------------------------------------
+ 9.4  Notation conventions used inside values
+--------------------------------------------------------------------------------
+ Four columns encode information inside the value itself rather than in
+ separate fields. Each needs parsing, not aggregation.
+
+  Innings as thirds  - Pitching "IP" and Fielding "Inn"
+        The digit after the decimal point counts OUTS, not a fraction.
+          x.0 = exactly x innings
+          x.1 = x innings plus one out   (x + 1/3)
+          x.2 = x innings plus two outs  (x + 2/3)
+        Therefore 140.1 is 140 1/3 innings, and summing this column
+        arithmetically is wrong. Convert to outs first: outs = floor(IP)*3 +
+        round((IP - floor(IP)) * 10).
+
+  Streak strings     - Season Games "Streak"
+        A run of "+" or "-" characters. The character indicates direction
+        (+ = winning, - = losing) and the LENGTH of the string is the streak
+        length. Observed range: 1 to 11 characters. Parse as
+        sign = first character, length = len(string).
+
+  Position strings   - Batting Stats "Pos" [2nd] and Fielding Stats "Pos"
+        Baseball-Reference shorthand. Digits are the standard scorer's position
+        numbers (1 pitcher, 2 catcher, 3 first base, 4 second base, 5 third
+        base, 6 shortstop, 7 left field, 8 center field, 9 right field).
+          *   marks the player's primary position
+          /   separates primary positions from occasional ones
+          H   pinch hitter
+          D   designated hitter
+          R   pinch runner
+        Example: "*4H/6" = primarily second base, also pinch hit and played
+        some shortstop. Note the simple one-token position codes live in the
+        FIRST "Pos" column of Batting Stats (see Appendix A).
+
+  Award strings      - "Awards" in Batting, Pitching and Fielding Stats
+        Concatenated tokens with NO separator, optionally suffixed with a
+        finishing place. Observed tokens:
+          AS     All-Star
+          GG     Gold Glove
+          SS     Silver Slugger
+          MVP-n  finished nth in Most Valuable Player voting
+          CYA-n  finished nth in Cy Young Award voting
+          ROY-n  finished nth in Rookie of the Year voting
+        Example: "ASMVP-17" = All-Star and 17th in MVP voting; "ASCYA-1MVP-10"
+        = All-Star, won the Cy Young Award, 10th in MVP voting. Parse with a
+        token regex rather than by splitting on a delimiter.
+
+================================================================================
+ 10. PROVENANCE AND PROCESSING LINEAGE
+================================================================================
+
+ The chain from original source to the published file, so that consumers can
+ judge what has and has not been altered.
+
+  Step 1 - ORIGINAL SOURCE
+     Baseball-Reference.com (Sports Reference LLC). For each of the 10 team-
+     seasons, four source tables were used: the team schedule and results page
+     (regular season), the postseason game results, and the standard team
+     batting, pitching and fielding tables. Logos were obtained separately from
+     SportsLogos.net.
+
+  Step 2 - EXTRACTION
+     Tables were copied from the source pages into Excel. Baseball-Reference
+     column headers were kept verbatim, which is why the file carries source-
+     specific names such as "cLI", "OPS+", "rOBA", "Rdrs/yr" and
+     "Player-additional", and one scrape artifact ("Z1", holding the link label
+     "boxscore" on every row).
+
+  Step 3 - KEY CONSTRUCTION
+     The composite text key "Unique" was added to every sheet as
+     Year_LeagueChampion_TeamNameShort. This is the only field that exists
+     purely to make the model joinable, and it is the primary key described in
+     section 3.3.
+
+  Step 4 - DERIVED HELPER COLUMNS (author-added, not from the source)
+     Added to Season Games : Day Name, Date Calc, 2 Games, 2 Games Order, Year,
+                             Game Date, Week Number
+     Added to PS Games     : Series #, Day Name, Game Date, and the running
+                             record columns
+     Added to Pitching     : "Pos" (SP / RP / CL), populated on 109 of 342 rows
+     Added to WS Teams     : Team No, Wild Card Bye
+     Everything else in the statistics sheets is source data carried across
+     unchanged.
+
+  Step 5 - DENORMALIZATION
+     Six team attributes (Year, League Champion, League, Team Name, Team
+     Location, Team Name Short) were copied from the hub onto Season Games and
+     PS Games. These copies are redundant, and one of them is known to be wrong
+     (section 6.3). The hub is authoritative.
+
+  Step 6 - MODELLING IN TABLEAU
+     Four separate Excel workbooks were connected in Tableau as a relationship
+     model (not physical joins), with the opponent lookup instantiated twice.
+     The published workbook uses a Tableau extract (.hyper) of this model.
+
+  Step 7 - CONSOLIDATION FOR PUBLIC RELEASE  (this file)
+     The four workbooks were combined into one, and the worksheet names were
+     renamed for clarity (mapping table in section 2). The Fielding Stats sheet
+     was included even though the visualization does not use it. NO VALUES,
+     COLUMNS, ROWS OR DATA TYPES WERE CHANGED in this step - the file is
+     row-for-row what the visualization consumes.
+
+  Not performed: no deduplication, no imputation, no outlier removal, no type
+  coercion, no rounding, no unit conversion, no translation. The data-quality
+  issues catalogued in section 6 are present in the file as published; they
+  have been documented rather than silently corrected, so that this release
+  continues to match the published visualization exactly.
+
+================================================================================
+ 11. FITNESS FOR USE
+================================================================================
+
+ Well suited to
+   - Win-rate analysis for World Series teams: by month, week, day of week,
+     home versus away, day versus night, opponent, or run differential.
+   - Narrative "road to the title" visuals: game-by-game sequences, streaks,
+     standings position over a season, cumulative win curves.
+   - Postseason bracket and series-progression analysis, using Series # and the
+     within-series running record columns.
+   - Roster composition and player contribution within a championship team, and
+     comparison of the ten team-seasons against each other.
+   - Teaching data modelling: it is a clean, small, genuinely multi-grain star
+     schema with a role-playing dimension, and it carries realistic data
+     defects worth practising on.
+
+ Not suited to
+   - League-wide analysis of any kind. Only 10 team-seasons are present, so
+     league averages, standings, and cross-club comparisons cannot be computed.
+     Opponent rows do not exist.
+   - Survivorship-free inference. Every team in this dataset reached the World
+     Series, so conclusions such as "teams that win more day games win titles"
+     are unsupportable without a control group of non-participants.
+   - Postseason win/loss accuracy without correction. 16 of 161 PS Games rows
+     carry a W/L flag that contradicts the score (section 6.5).
+   - Fielding analysis of 2025. Those rows do not exist (section 6.8).
+   - Venue, travel, weather or geography analysis. There are no stadium names,
+     no coordinates and no neutral-site flag (section 0.3).
+   - Player tracking across teams by identifier. "Player-additional" is missing
+     for both 2025 teams (section 6.7).
+   - Anything requiring innings to be summed naively - IP and Inn use the
+     thirds convention (section 9.4).
+
+ Known biases and limitations
+   - SELECTION BIAS by design. The dataset is defined by its outcome: inclusion
+     requires reaching the World Series. This is the single most important
+     limitation and it affects almost every inferential use.
+   - Small n. Ten team-seasons is a small sample; differences between seasons
+     are easily within noise.
+   - Rule changes across the window. The 2021-2025 span includes the universal
+     designated hitter (from 2022), the pitch clock, shift restrictions and
+     larger bases (from 2023), and an expanded postseason format (from 2022,
+     which is why Wild Card Series rows exist only for some team-seasons).
+     Year-over-year comparisons of pace, offence and postseason length are
+     affected by rule changes, not only by team quality.
+   - Secondary data. Nothing here was independently measured; accuracy is
+     inherited from Baseball-Reference and from the manual extraction step.
+   - Point-in-time snapshot. Baseball-Reference revises historical statistics
+     occasionally; this file reflects the source as of September 2026.
+
+================================================================================
+ 12. MAINTENANCE, VERSIONING AND CHANGE LOG
+================================================================================
+
+  Maintenance status  : Actively maintained on an occasional basis
+  Update frequency    : Irregular - expected annually, after each World Series
+  Planned next update : Following the 2026 World Series, adding the 2026
+                        Champion and Runner-Up as team-seasons 11 and 12
+  Versioning scheme   : Whole-number dataset versions (1.0, 2.0) for changes to
+                        the data; minor versions (1.1) for documentation-only
+                        changes. The data file and this metadata record are
+                        versioned separately and are identified at the top of
+                        this document.
+  Backward compatibility:
+                        Adding a season adds rows to every sheet plus two rows
+                        to WS Teams; it does not change the schema or the join
+                        model. Consumers keying on "Unique" are unaffected.
+                        Any of the section 7 cleanup items, if applied, WOULD
+                        be a breaking change and would warrant version 2.0.
+  Deprecation policy  : Superseded versions remain retrievable from the
+                        repository history; the current file always carries the
+                        filename given in section 0.2.
+
+  CHANGE LOG
+
+    Data v1.0 - 2026-09-12
+      Initial public release. Four source workbooks consolidated into one;
+      worksheet names standardised; Fielding Stats added to the package.
+      Covers seasons 2021-2025, 10 team-seasons, 2,909 rows.
+
+    Document v1.0 - 2026-09-12
+      Initial documentation: overview, provenance, join model, full data
+      dictionary for 184 columns, data-quality audit, cleanup guidance.
+
+    Document v1.1 - 2026-09-14
+      Expanded into a full metadata record: added section 0 (descriptive
+      metadata, file manifest with checksums, coverage, structural summary,
+      keywords), section 9 (encoding, missing-value, type and notation
+      conventions), section 10 (processing lineage), section 11 (fitness for
+      use, biases and limitations), section 12 (maintenance and change log),
+      section 13 (privacy, ethics, trademark), section 14 (contact and related
+      resources), and appendices A-C (controlled vocabularies, compact field
+      manifest, machine-readable metadata). No change to the data file.
+
+  KNOWN OPEN ITEMS carried into the next release
+    The eleven cleanup items in section 7 remain outstanding, most notably the
+    16 postseason W/L rows (6.5), the 2025 "League Champion" fill-down (6.3),
+    the 20 unmatched opponent codes (6.1), and the missing 2025 fielding rows
+    (6.8).
+
+================================================================================
+ 13. PRIVACY, ETHICS AND TRADEMARK
+================================================================================
+
+  Personal data
+    The dataset names professional athletes acting in their public,
+    professional capacity, together with their age and publicly reported
+    on-field performance. All of it was already published by Baseball-
+    Reference. It contains NO contact details, NO addresses, NO dates of birth,
+    NO salary or contract data, NO health or injury records, NO biometric or
+    tracking data, and no information about private individuals. No special-
+    category or sensitive personal data is present.
+
+  Re-identification risk
+    None beyond the identification inherent in naming public figures. No
+    aggregation or suppression has been applied, and none is required.
+
+  Ethical considerations
+    The selection bias described in section 11 is the main ethical risk in
+    reuse: presenting findings from this dataset as general statements about
+    "what makes teams win" without noting that every team in it reached the
+    World Series would mislead readers. Any published analysis should state the
+    universe.
+
+  Trademark
+    Team names, nicknames, marks and logos are the property of the respective
+    clubs and of Major League Baseball. The logo images in "Baseball Teams
+    Logos.zip" are included for identification and non-commercial visualization
+    use only. Their inclusion does not imply endorsement or affiliation with
+    MLB, any club, Sports Reference LLC or SportsLogos.net.
+
+  Source terms
+    Statistics: Baseball-Reference.com (Sports Reference LLC).
+    Logos: SportsLogos.net.
+    Both remain subject to their owners' current terms of use. Check those
+    terms before commercial use or large-scale redistribution.
+
+================================================================================
+ 14. CONTACT AND RELATED RESOURCES
+================================================================================
+
+  Dataset compiler and point of contact
+    John Johansson - reachable via the Tableau Public profile below.
+
+  Related resources
+    Visualization built on this data
+      "All In The Wins | #VOTD"
+      https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries
+
+    Author profile
+      https://public.tableau.com/app/profile/john.johansson
+
+    Source of the statistics
+      https://www.baseball-reference.com/
+
+    Source of the logos
+      https://www.sportslogos.net/
+
+  Feedback
+    Corrections are welcome, particularly on the postseason W/L rows listed in
+    section 6.5. Please cite the sheet name, the row's "Unique" value and the
+    game identifier ("Gm#" or "Post Gm#") so the row can be located exactly.
+
+  How to cite
+    See "Suggested citation" at the end of section 8.
+
+================================================================================
+ APPENDIX A - CONTROLLED VOCABULARIES
+================================================================================
+
+ Complete enumerations of every categorical column, with the observed row count
+ for each value. These are the permitted values AS OBSERVED IN THIS RELEASE;
+ they are not a declared schema, and a future season could introduce new codes
+ (a new opponent, a new award token, a longer streak).
+
+ WS Teams :: League Champion              (2 values)
+     Champion (5), Runner-Up (5)
+
+ WS Teams :: League                       (2 values)
+     AL (5), NL (5)
+
+ WS Teams :: Tm ID                        (8 values across 10 rows)
+     ARI (1), ATL (1), HOU (2), LAD (2), NYY (1), PHI (1), TEX (1), TOR (1)
+
+ WS Teams :: Wild Card Bye                (2 values, native boolean)
+     TRUE (6), FALSE (4)
+
+ Team Name Opponite :: TeamID Opponite    (30 values, one per MLB club)
+     ARI, ATL, BAL, BOS, CHC, CHW, CIN, CLE, COL, DET, HOU, KCR, LAA, LAD,
+     MIA, MIL, MIN, NYM, NYY, OAK, PHI, PIT, SDP, SEA, SFG, STL, TBR, TEX,
+     TOR, WSN
+     Note: the Athletics appear as the legacy code OAK; Season Games uses the
+     current code ATH for 2025 (section 6.1).
+
+ Team Name Opponite :: League Opponite    (2 values)
+     AL (15), NL (15)
+
+ Season Games :: Tm                       (8 values)
+     ARI (162), ATL (161), HOU (324), LAD (324), NYY (162), PHI (162),
+     TEX (162), TOR (162)
+
+ Season Games :: Opp                      (31 values)
+     ARI (56), ATH (10), ATL (50), BAL (57), BOS (58), CHC (42), CHW (41),
+     CIN (43), CLE (41), COL (65), DET (43), HOU (38), KCR (42), LAA (79),
+     LAD (39), MIA (68), MIL (40), MIN (41), NYM (72), NYY (46), OAK (67),
+     PHI (53), PIT (41), SDP (67), SEA (76), SFG (63), STL (42), TBR (56),
+     TEX (64), TOR (51), WSN (68)
+     ATH does not resolve against the lookup sheet (section 6.1).
+
+ Season Games :: W/L                      (4 values)
+     W (859), L (621), W-wo (70), L-wo (69)
+     "-wo" = decided by a walk-off. Test wins with "starts with W".
+
+ Season Games :: D/N                      (2 values)
+     N (1,080) night, D (539) day
+
+ Season Games :: Z1                       (1 value)
+     boxscore (1,619) - scrape artifact, no information content
+
+ Season Games :: Z2                       (1 value + meaningful blank)
+     @ (810) = subject team was away; BLANK (809) = subject team was home
+
+ Season Games :: Day Name                 (7 values)
+     Friday (261), Monday (161), Saturday (269), Sunday (267), Thursday (159),
+     Tuesday (252), Wednesday (250)
+
+ Season Games :: Rank                     (5 values - division position)
+     1 (990), 2 (274), 3 (307), 4 (38), 5 (10)
+
+ Season Games :: 2 Games                  (2 values)
+     No (1,581), Yes (38)   [38 rows = 19 doubleheaders]
+
+ Season Games :: 2 Games Order            (2 values)
+     1 (1,600), 2 (19)
+
+ Season Games :: Streak                   (20 values)
+     Winning : + (385), ++ (221), +++ (136), ++++ (85), +++++ (44),
+               ++++++ (26), +++++++ (13), ++++++++ (9), +++++++++ (5),
+               ++++++++++ (3), +++++++++++ (2)
+     Losing  : - (381), -- (174), --- (76), ---- (38), ----- (11),
+               ------ (4), ------- (3), -------- (2), --------- (1)
+     Longest observed: 11-game winning streak, 9-game losing streak.
+
+ Season Games :: Orig. Scheduled          (13 populated values - reason codes)
+     Reasons observed: Rain (8), Inclement weather (2), Covid (1),
+     Air Quality (1), Hurricane Hilary (1). Format is
+     "YYYY-MM-DD (Reason)".
+
+ PS Games :: Series                       (4 values)
+     WORLD SERIES (58), LEAGUE CHAMPIONSHIP SERIES (57),
+     DIVISION SERIES (38), WILD CARD SERIES (8)
+
+ PS Games :: Series #                     (4 values - sorts toward the title)
+     1 (58) = World Series
+     2 (57) = League Championship Series
+     3 (38) = Division Series
+     4 (8)  = Wild Card Series
+
+ PS Games :: Tm                           (8 values)
+     ARI (17), BRA (16), HOU (29), LAD (33), NYY (14), PHI (17), TEX (17),
+     TOR (18)
+     BRA is a non-standard code for Atlanta, coded ATL elsewhere (6.1).
+
+ PS Games :: Opp                          (21 values)
+     ARI (5), ATL (4), BAL (3), BOS (6), BRA (6), CIN (2), CLE (5), CWS (4),
+     HOU (19), KCR (4), LAD (21), MIL (10), NYM (6), NYY (13), PHI (17),
+     SDP (10), SEA (10), STL (2), TBR (2), TEX (5), TOR (7)
+     BRA and CWS do not resolve against the lookup sheet (section 6.1).
+
+ PS Games :: W/L                          (2 values)
+     W (112), L (49)
+     16 rows contradict the score - see section 6.5.
+
+ PS Games :: Series Standings             (14 values - final result of the
+                                           series, repeated on every row)
+     4 - 2 (24), 3 - 1 (24), 4 - 1 (15), 4 - 3 (14), 4 -3 (14), 2 - 4 (12),
+     5 - 0 (10), 3 - 0 (9), 2 - 0 (8), 4 - 0 (8), 3 - 4 (7), 5 - 1 (6),
+     3 - 2 (5), 0 (5)
+     Two defects are visible in this list: "4 -3" (missing space) and the
+     numeric 0 - see section 6.4.
+
+ PS Games :: Day Name                     (7 values)
+     Saturday (31), Tuesday (29), Friday (26), Wednesday (26), Monday (20),
+     Sunday (15), Thursday (14)
+
+ Batting Stats :: Pos  [first "Pos" column, simple code]   (15 values)
+     P (76), C (37), CF (28), DH (25), 3B (23), LF (18), UT (16), OF (15),
+     SS (15), 1B (14), 2B (14), IF (14), RF (11), CI (2), MI (1)
+     UT = utility, IF = infielder, OF = outfielder, CI = corner infielder,
+     MI = middle infielder.
+
+ Pitching Stats :: Pos                    (3 values, 109 of 342 rows populated)
+     SP (59) starting pitcher, RP (40) relief pitcher, CL (10) closer
+
+ Awards tokens (Batting + Pitching + Fielding combined)
+     AS (All-Star), GG (Gold Glove), SS (Silver Slugger),
+     MVP-n, CYA-n, ROY-n (nth place in that award's voting)
+     Tokens are concatenated without separators - see section 9.4.
+
+================================================================================
+ APPENDIX B - COMPACT FIELD MANIFEST
+================================================================================
+
+ Every column in the workbook in one machine-transcribable list, for building a
+ schema, a catalogue entry or an import specification. Full descriptions are in
+ section 5.
+
+ Format:  ordinal | column name | type | nulls | distinct values
+ Types:   integer, decimal, text, date, time, boolean, mixed(...)
+ "Nulls" counts empty cells among the data rows; see section 9.2 before
+ treating any of them as missing.
+
+ --- WS Teams  (10 rows) ---------------------------------------------
+  1 | Team No                   | integer  |     0 |    10   [row id]
+  2 | Unique                    | text     |     0 |    10   [PRIMARY KEY]
+  3 | Tm ID                     | text     |     0 |     8
+  4 | Year                      | integer  |     0 |     5
+  5 | League Champion           | text     |     0 |     2
+  6 | League                    | text     |     0 |     2
+  7 | Team Name                 | text     |     0 |     8
+  8 | Team Location             | text     |     0 |     8
+  9 | Team Name Short           | text     |     0 |     8
+ 10 | Wild Card Bye             | boolean  |     0 |     2
+
+ --- Team Name Opponite  (30 rows) -----------------------------------
+  1 | TeamID Opponite           | text     |     0 |    30   [PRIMARY KEY]
+  2 | Team Name Opponite        | text     |     0 |    30
+  3 | Team Location Opponite    | text     |     0 |    27
+  4 | Team Name Opponite Short  | text     |     0 |    30
+  5 | League Opponite           | text     |     0 |     2
+
+ --- Season Games  (1,619 rows) --------------------------------------
+  1 | Gm#                       | integer  |     0 |   162   [key part]
+  2 | Date (OG)                 | text     |     0 |   898
+  3 | Z1                        | text     |     0 |     1   [droppable]
+  4 | Tm                        | text     |     0 |     8
+  5 | Z2                        | text     |   809 |     1   [blank = home]
+  6 | Opp                       | text     |     0 |    31   [FOREIGN KEY]
+  7 | W/L                       | text     |     0 |     4
+  8 | R                         | integer  |     0 |    21
+  9 | RA                        | integer  |     0 |    20
+ 10 | Inn                       | integer  | 1,465 |     8   [blank = 9]
+ 11 | W - L                     | text     |     0 | 1,158
+ 12 | Rank                      | integer  |     0 |     5
+ 13 | GB                        | mixed(num/text) | 0 |  66
+ 14 | Win                       | text     |     0 |   462
+ 15 | Loss                      | text     |     0 |   531
+ 16 | Save                      | text     |   834 |   190
+ 17 | Time                      | time     |     0 |   140   [duration]
+ 18 | D/N                       | text     |     0 |     2
+ 19 | Attendance                | integer  |    11 | 1,553
+ 20 | cLI                       | decimal  |     2 |   227
+ 21 | Streak                    | text     |     0 |    20
+ 22 | Orig. Scheduled           | text     | 1,606 |    13
+ 23 | W                         | integer  |     0 |   107
+ 24 | L                         | integer  |     0 |    79
+ 25 | Day Name                  | text     |     0 |     7
+ 26 | Date Calc                 | mixed(date/text) | 0 | 367
+ 27 | 2 Games                   | text     |     0 |     2
+ 28 | 2 Games Order             | integer  |     0 |     2
+ 29 | Year                      | integer  |     0 |     5
+ 30 | Game Date                 | text     |     0 |   862   [M/D/YYYY]
+ 31 | Week Number               | integer  |     0 |    29
+ 32 | Unique                    | text     |     0 |    10   [FOREIGN KEY]
+ 33 | League Champion           | text     |     0 |     2   [denorm; see 6.3]
+ 34 | League                    | text     |     0 |     2   [denorm]
+ 35 | Team Name                 | text     |     0 |     8   [denorm]
+ 36 | Team Location             | text     |     0 |     8   [denorm]
+ 37 | Team Name Short           | text     |     0 |     8   [denorm]
+
+ --- PS Games  (161 rows) --------------------------------------------
+  1 | Series                    | text     |     0 |     4
+  2 | Year                      | integer  |     0 |     5
+  3 | Tm                        | text     |     0 |     8
+  4 | Post Gm#                  | integer  |     0 |    29   [key part]
+  5 | Post Series Gm#           | integer  |     0 |     7
+  6 | Series #                  | integer  |     0 |     4
+  7 | Series Standings          | mixed(num/text) | 0 |  14
+  8 | Opp                       | text     |     0 |    21   [FOREIGN KEY]
+  9 | W/L                       | text     |     0 |     2   [16 bad; see 6.5]
+ 10 | R                         | integer  |     0 |    13
+ 11 | RA                        | integer  |     0 |    13
+ 12 | W - L_S                   | text     |     0 |    25
+ 13 | W_S                       | integer  |     0 |     6
+ 14 | L_S                       | integer  |     0 |     6
+ 15 | W - L                     | text     |    35 |    63   [no 2025]
+ 16 | W                         | integer  |    35 |    21   [no 2025]
+ 17 | L                         | integer  |    35 |    10   [no 2025]
+ 18 | Day Name                  | text     |     0 |     7
+ 19 | Game Date                 | date     |     0 |   105   [native date]
+ 20 | Unique                    | text     |     0 |    10   [FOREIGN KEY]
+ 21 | League Champion           | text     |     0 |     2   [denorm]
+ 22 | League                    | text     |     0 |     2   [denorm]
+ 23 | Team Name                 | text     |     0 |     8   [denorm]
+ 24 | Team Location             | text     |     0 |     8   [denorm]
+ 25 | Team Name Short           | text     |     0 |     8   [denorm]
+
+ --- Batting Stats  (321 rows) ---------------------------------------
+  1 | Year                      | integer  |     0 |     5
+  2 | Unique                    | text     |     0 |    10   [FOREIGN KEY]
+  3 | Rk                        | integer  |    10 |    56   [blank = totals]
+  4 | Player                    | text     |     0 |   273   [key part]
+  5 | Age                       | integer  |    10 |    19
+  6 | Pos                       | text     |    12 |    15
+  7 | WAR                       | decimal  |     2 |    75
+  8 | G                         | integer  |     0 |   123
+  9 | PA                        | integer  |     0 |   209
+ 10 | AB                        | integer  |     0 |   197
+ 11 | R                         | integer  |     0 |   103
+ 12 | H                         | integer  |     0 |   121
+ 13 | 2B                        | integer  |     0 |    52
+ 14 | 3B                        | integer  |     0 |    18
+ 15 | HR                        | integer  |     0 |    50
+ 16 | RBI                       | integer  |     0 |    96
+ 17 | SB                        | integer  |     0 |    34
+ 18 | CS                        | integer  |     0 |    15
+ 19 | BB                        | integer  |     0 |    82
+ 20 | SO                        | integer  |     0 |   131
+ 21 | BA                        | decimal  |    53 |   137
+ 22 | OBP                       | decimal  |    53 |   142
+ 23 | SLG                       | decimal  |    53 |   176
+ 24 | OPS                       | decimal  |    53 |   201
+ 25 | OPS+                      | integer  |    53 |   137
+ 26 | rOBA                      | decimal  |    53 |   158
+ 27 | Rbat+                     | integer  |    53 |   155
+ 28 | TB                        | integer  |     0 |   157
+ 29 | GIDP                      | integer  |     0 |    31
+ 30 | HBP                       | integer  |     0 |    23
+ 31 | SH                        | integer  |     0 |    17
+ 32 | SF                        | integer  |     0 |    20
+ 33 | IBB                       | integer  |     0 |    20
+ 34 | Pos  [2nd, "Pos 1"]       | mixed(date/num/text) | 10 | 197
+ 35 | Awards                    | text     |   274 |    29
+ 36 | Player-additional         | mixed(num/text) | 56 |  239
+
+ --- Pitching Stats  (342 rows) --------------------------------------
+  1 | Year                      | integer  |     0 |     5
+  2 | Unique                    | text     |     0 |    10   [FOREIGN KEY]
+  3 | Rk                        | integer  |    10 |    40   [blank = totals]
+  4 | Player                    | text     |     0 |   288   [key part]
+  5 | Age                       | integer  |    10 |    20
+  6 | Pos                       | text     |   233 |     3   [sparse]
+  7 | WAR                       | decimal  |     0 |    63
+  8 | W                         | integer  |     0 |    28
+  9 | L                         | integer  |     0 |    22
+ 10 | W-L%                      | decimal  |    99 |    62
+ 11 | ERA                       | decimal  |     0 |   220
+ 12 | G                         | integer  |     0 |    73
+ 13 | GS                        | integer  |     0 |    35
+ 14 | GF                        | integer  |     0 |    37
+ 15 | CG                        | integer  |     0 |     4
+ 16 | SHO                       | integer  |     0 |     3
+ 17 | SV                        | integer  |     0 |    29
+ 18 | IP                        | decimal  |     0 |   201   [thirds; see 9.4]
+ 19 | H                         | integer  |     0 |   116
+ 20 | R                         | integer  |     0 |    80
+ 21 | ER                        | integer  |     0 |    81
+ 22 | HR                        | integer  |     0 |    39
+ 23 | BB                        | integer  |     0 |    70
+ 24 | IBB                       | integer  |     0 |    15
+ 25 | SO                        | integer  |     0 |   137
+ 26 | HBP                       | integer  |     0 |    24
+ 27 | BK                        | integer  |     0 |    11
+ 28 | WP                        | integer  |     0 |    24
+ 29 | BF                        | integer  |     0 |   226
+ 30 | ERA+                      | integer  |    20 |   151
+ 31 | FIP                       | decimal  |     0 |   240
+ 32 | WHIP                      | decimal  |     0 |   243
+ 33 | H9                        | decimal  |     0 |   107
+ 34 | HR9                       | decimal  |     0 |    43
+ 35 | BB9                       | decimal  |     0 |    74
+ 36 | SO9                       | decimal  |     0 |   100
+ 37 | SO/BB                     | decimal  |    26 |   172
+ 38 | Awards                    | text     |   326 |    10
+ 39 | Player-additional         | mixed(num/text) | 80 |  233
+
+ --- Fielding Stats  (426 rows; seasons 2021-2024 only) --------------
+  1 | Year                      | integer  |     0 |     4
+  2 | Unique                    | text     |     0 |     8   [FOREIGN KEY]
+  3 | Rk                        | integer  |     8 |    59   [blank = totals]
+  4 | Player                    | text     |     0 |   379   [key part]
+  5 | Age                       | integer  |     8 |    20
+  6 | G                         | integer  |     0 |   120
+  7 | GS                        | integer  |     0 |   102
+  8 | CG                        | integer  |     0 |   107
+  9 | Inn                       | decimal  |     0 |   312   [thirds; see 9.4]
+ 10 | Ch                        | integer  |     0 |   170
+ 11 | PO                        | integer  |     0 |   150
+ 12 | A                         | integer  |     0 |    92
+ 13 | E                         | integer  |     0 |    25
+ 14 | DP                        | integer  |     0 |    54
+ 15 | Fld%                      | decimal  |    36 |    63
+ 16 | Rtot                      | integer  |   239 |    35   [sparse]
+ 17 | Rtot/yr                   | integer  |   239 |    68   [sparse]
+ 18 | Rdrs                      | integer  |     0 |    38
+ 19 | Rdrs/yr                   | integer  |     0 |    65
+ 20 | RF/9                      | decimal  |     0 |   271
+ 21 | lgRF9                     | decimal  |     0 |   148
+ 22 | RF/G                      | decimal  |     0 |   210
+ 23 | lgRFG                     | decimal  |     0 |   133
+ 24 | PB                        | integer  |   384 |    13   [catchers only]
+ 25 | WP                        | integer  |   384 |    28   [catchers only]
+ 26 | SB                        | integer  |   384 |    30   [catchers only]
+ 27 | CS                        | integer  |   384 |    23   [catchers only]
+ 28 | CS%                       | decimal  |   387 |    31   [catchers; 0-100]
+ 29 | Pick                      | integer  |   384 |     5   [catchers only]
+ 30 | Pos                       | mixed(date/num/text) | 8 | 152
+ 31 | Awards                    | text     |   377 |    34
+ 32 | Player-additional         | mixed(num/text) | 0 |  380
+
+================================================================================
+ APPENDIX C - MACHINE-READABLE METADATA
+================================================================================
+
+ Two ready-to-use metadata payloads carrying the same facts as section 0. Copy
+ either into its own file and update the "path" / "url" values to match where
+ you host the data. Neither is required to use the dataset.
+
+--------------------------------------------------------------------------------
+ C.1  Frictionless Data Package  ->  save as "datapackage.json"
+--------------------------------------------------------------------------------
+{
+  "name": "baseball-road-to-world-series-2021-2025",
+  "title": "Road to the World Series - MLB Data, 2021-2025",
+  "description": "Complete regular-season and postseason game logs, plus season-level batting, pitching and fielding statistics, for every team that reached the MLB World Series in the 2021-2025 seasons (10 team-seasons).",
+  "version": "1.0",
+  "created": "2026-09-12",
+  "keywords": ["MLB", "baseball", "World Series", "game log", "postseason",
+               "batting", "pitching", "fielding", "sports analytics",
+               "Baseball-Reference", "Tableau"],
+  "contributors": [
+    { "title": "John Johansson", "role": "author" }
+  ],
+  "sources": [
+    { "title": "Baseball-Reference.com (Sports Reference LLC)",
+      "path": "https://www.baseball-reference.com/" },
+    { "title": "SportsLogos.net", "path": "https://www.sportslogos.net/" }
+  ],
+  "temporal": { "start": "2021-04-01", "end": "2025-11-01" },
+  "spatial": "United States; Canada",
+  "resources": [
+    {
+      "name": "road-to-world-series-workbook",
+      "path": "Data_Baseball_Road_To_World_Series_2021-2025.xlsx",
+      "format": "xlsx",
+      "mediatype": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "bytes": 564422,
+      "encoding": "utf-8",
+      "hash": "sha256:2201b857bf6ba228a8e817d78b9bfa2d87786c782a25fae716556eef08fca8cb",
+      "description": "6 worksheets, 2909 data rows, 184 columns. Sheets: WS Teams (hub, PK 'Unique'), Team Name Opponite (lookup, PK 'TeamID Opponite'), Season Games, PS Games, Batting Stats, Pitching Stats, Fielding Stats."
+    },
+    {
+      "name": "team-logos",
+      "path": "Baseball Teams Logos.zip",
+      "format": "zip",
+      "mediatype": "application/zip",
+      "bytes": 3475595,
+      "hash": "sha256:9e7cf5f8f51158751012d098850b463507ce364e00522ce55eca38e98219b0ad",
+      "description": "30 transparent PNG logos, one per MLB club, approx. 905 px longest edge."
+    }
+  ],
+  "foreignKeys": [
+    { "fields": "Unique", "reference": { "resource": "WS Teams", "fields": "Unique" },
+      "appliesTo": ["Season Games", "PS Games", "Batting Stats",
+                    "Pitching Stats", "Fielding Stats"] },
+    { "fields": "Opp", "reference": { "resource": "Team Name Opponite",
+      "fields": "TeamID Opponite" },
+      "appliesTo": ["Season Games", "PS Games"],
+      "note": "20 rows do not resolve - see section 6.1" }
+  ]
+}
+
+--------------------------------------------------------------------------------
+ C.2  schema.org Dataset (JSON-LD)  ->  embed in a web page or save as .jsonld
+--------------------------------------------------------------------------------
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "Road to the World Series - MLB Data, 2021-2025",
+  "alternateName": "Data_Baseball_Road_To_World_Series_2021-2025",
+  "description": "Complete regular-season and postseason game logs, plus season-level batting, pitching and fielding statistics, for every team that reached the MLB World Series in the 2021-2025 seasons - ten team-seasons, one Champion and one Runner-Up per year. Companion dataset to the Tableau Public visualization 'All In The Wins'.",
+  "version": "1.0",
+  "dateCreated": "2026-09-12",
+  "dateModified": "2026-09-12",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "keywords": ["MLB", "Major League Baseball", "World Series", "baseball",
+               "game log", "postseason", "batting", "pitching", "fielding",
+               "sports analytics", "Baseball-Reference"],
+  "creator":   { "@type": "Person", "name": "John Johansson" },
+  "publisher": { "@type": "Person", "name": "John Johansson" },
+  "temporalCoverage": "2021-04-01/2025-11-01",
+  "spatialCoverage": [
+    { "@type": "Country", "name": "United States" },
+    { "@type": "Country", "name": "Canada" }
+  ],
+  "variableMeasured": [
+    "wins", "losses", "runs scored", "runs allowed", "attendance",
+    "game duration", "championship leverage index", "batting average",
+    "on-base plus slugging", "earned run average", "innings pitched",
+    "wins above replacement", "defensive runs saved", "fielding percentage"
+  ],
+  "measurementTechnique": "Compilation of published box-score and season-total statistics",
+  "isBasedOn": [
+    { "@type": "WebSite", "name": "Baseball-Reference.com",
+      "url": "https://www.baseball-reference.com/" },
+    { "@type": "WebSite", "name": "SportsLogos.net",
+      "url": "https://www.sportslogos.net/" }
+  ],
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "name": "Data_Baseball_Road_To_World_Series_2021-2025.xlsx",
+      "encodingFormat": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "contentSize": "564422"
+    },
+    {
+      "@type": "DataDownload",
+      "name": "Baseball Teams Logos.zip",
+      "encodingFormat": "application/zip",
+      "contentSize": "3475595"
+    }
+  ],
+  "subjectOf": {
+    "@type": "CreativeWork",
+    "name": "All In The Wins | #VOTD",
+    "url": "https://public.tableau.com/app/profile/john.johansson/viz/AllIntheWins/RoadtotheWorldSeries"
+  }
+}
 
 ================================================================================
  END OF DOCUMENT
